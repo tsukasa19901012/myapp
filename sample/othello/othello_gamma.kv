@@ -1,0 +1,139 @@
+# -*- coding: utf-8 -*-
+<RootWidget>:
+    canvas.before:
+        Color:
+            rgb: [1, 1, 1]
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<TitleWidget@FloatLayout>:
+    Label:
+        text: 'Otehllo'
+        color: [0, 0, 0, 1]
+        font_size: 72
+        pos_hint: {'center_x':0.5, 'center_y':0.7}
+    Button:
+        text: 'Start'
+        font_size: 36
+        size: [160, 100]
+        size_hint: [None, None]
+        pos_hint: {'center_x':0.5, 'center_y':0.3}
+        background_color: [0, 0, 0, 1]
+        on_press: app.root.gotoSelectTurn()
+
+<BtnTurn@Button>:
+    background_normal: ''
+    font_size: 36
+    size_hint: [None, None]
+    size: [175, 100]
+    on_press: app.root.printTest('SelectTurn')  # 確認用
+    canvas:
+        Color:
+            rgb: [0, 0, 0]
+        Line:
+            rectangle: self.x, self.y, self.width, self.height
+            width: 3
+
+<SelectTurn>:
+    Label:
+        text: 'Select Black(First) or White(Second).'
+        color: [0, 0, 0, 1]
+        font_size: 48
+        pos_hint: {'center_x':0.5, 'center_y':0.7}
+    BtnTurn:    # Black
+        text: 'Black'
+        color: [1, 1, 1, 1]
+        background_color: [0, 0, 0, 1]
+        pos_hint: {'center_x':0.3, 'center_y':0.35}
+        on_press: root.setStoneBlack()
+    BtnTurn:    # White
+        text: 'White'
+        color: [0, 0, 0, 1]
+        background_color: [1, 1, 1, 1]
+        pos_hint: {'center_x':0.7, 'center_y':0.35}
+        on_press: root.setStoneWhite()
+
+
+<GridLabel@Label>:
+    color: [1, 1, 1, 1]
+    font_size: 26
+    bold: True
+
+<PlayWidget@BoxLayout>:
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+        size_hint_x: 2
+        FieldWidget:
+            size: [800, 800]
+            size_hint: [None, None]
+            on_pos: self.drawField()
+            on_size: self.drawField()
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_x: 1
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
+            GridLayout:
+                canvas.before:
+                    Color:
+                        rgb: [0.281, 0.363, 0.246]
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                    Color:
+                        rgb: [0, 0, 0]
+                    Line:
+                        rectangle: [self.x, self.y, self.width, self.height]
+                        width: 3
+                    Line:
+                        points: [self.width/2 + self.x, self.y,  self.width/2 + self.x, self.height + self.y]
+                        width: 3
+                    Line:
+                        points: [self.x, self.height/3*2 + self.y,  self.width + self.x, self.height/3*2 + self.y]
+                        width: 3
+                    Line:
+                        points: [self.x, self.height/3 + self.y,  self.width + self.x, self.height/3 + self.y]
+                        width: 3
+                rols: 3
+                cols: 2
+                size_hint: [0.8, 0.6]
+                GridLabel:
+                    id: BlackTurn
+                GridLabel:
+                    id: WhiteTurn
+                GridLabel:
+                    text: 'Black'
+                GridLabel:
+                    text: 'White'
+                GridLabel:
+                    id: clb
+                GridLabel:
+                    id: clw
+        Label:
+            id: TurnLabel
+            bold: True
+            color: [0, 0, 0, 1]
+            font_size: 26
+            halign: 'left'
+            valign: 'middle'
+            text_size: [self.width*0.8, 50]
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
+            Button: # return Button
+                canvas.after:
+                    Color:
+                        rgb: [0, 0, 0]
+                    Line:
+                        rectangle: [self.x, self.y, self.width, self.height]
+                        width: 3
+                background_color: [0.281, 0.363, 0.246, 1]
+                background_normal: ''
+                color: [1, 1, 1, 1]
+                font_size: 36
+                size_hint: [0.8, 0.2]
+                text: 'Return'
+                on_press: app.root.setField(), app.root.gotoTitle()
