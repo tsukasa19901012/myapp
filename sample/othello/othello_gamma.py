@@ -7,6 +7,8 @@ from kivy.graphics import Color, Line, Rectangle, Ellipse
 from kivy.lang import Builder
 
 import sys
+sys.dont_write_bytecode = True
+
 import numpy as np
 
 import othello_alpha
