@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+
+<RootWidget>:
+    tittle: 'XENO'
+    canvas.before:
+        Color:
+            rgb: [1, 1, 1]
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<TitleWidget@FloatLayout>:
+    Label:
+        text: 'XENO'
+        color: [0, 0, 0, 1] # 黒文字
+        font_size: 72
+        pos_hint: {'center_x':0.5, 'center_y':0.7}
+    Button:
+        text: 'Start'
+        font_size: 36
+        size: [160, 100]
+        size_hint: [None, None]
+        pos_hint: {'center_x':0.5, 'center_y':0.3}
+        background_color: [0, 0, 0, 1] # 黒ボタン
+        on_press: app.root.gotoSelectTurn()
+
+<BtnTurn@Button>:
+    background_normal: ''
+    font_size: 36
+    size_hint: [None, None]
+    size: [175, 100]
+    canvas:
+        Color:
+            rgb: [0, 0, 0]
+        Line:
+            rectangle: self.x, self.y, self.width, self.height
+            width: 3
+
+<SelectTurn>:
+    Label:
+        text: '先攻か後攻を選択してください。'
+        color: [0, 0, 0, 1]
+        font_size: 48
+        pos_hint: {'center_x':0.5, 'center_y':0.7}
+    BtnTurn:    # 先攻
+        text: '先攻'
+        color: [1, 1, 1, 1]
+        background_color: [0, 0, 0, 1]
+        pos_hint: {'center_x':0.3, 'center_y':0.35}
+        on_press: root.setFirstStrike()
+    BtnTurn:    # 後攻
+        text: '後攻'
+        color: [0, 0, 0, 1]
+        background_color: [1, 1, 1, 1]
+        pos_hint: {'center_x':0.7, 'center_y':0.35}
+        on_press: root.setSecondStrike()
