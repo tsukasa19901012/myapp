@@ -11,12 +11,10 @@ class SwitchButton(Button):
         else:
             self.text = 'START'
 
+class MyRoot(FloatLayout):
+    pass
 
 class TittleApp(App):
-    def build(self):
-        layout = FloatLayout()
-        btn = SwitchButton()
-        layout.add_widget(btn)
-        return layout
+    pass
 
 TittleApp().run()
