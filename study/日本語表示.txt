@@ -1,0 +1,5 @@
+日本語表示
+
+japanize-kivyを使う
+
+https://blog.amedama.jp/entry/japanize-kivy
