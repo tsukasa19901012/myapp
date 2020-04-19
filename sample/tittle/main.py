@@ -15,6 +15,9 @@ class MyRoot(FloatLayout):
     pass
 
 class TittleApp(App):
-    pass
+    def __init__(self, **kwargs):
+        super(TittleApp, self).__init__(**kwargs)
+        self.title = '画面切り替えテスト'
+
 
 TittleApp().run()
