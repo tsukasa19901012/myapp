@@ -1,0 +1,12 @@
+pythonファイルをappファイルに変換する。
+
+pyinstallerを使って、変換する。
+
+pyinstaller 対象pythonのmainファイル  --onefile --noconsole
+例） pyinstaller main.py --onefile --noconsole
+
+オプションの意味ですが、
+「–onefile」は１つの実行ファイル形式にまとめるオプション
+「–noconsole」は、コンソールなしでアプリを立ち上げるオプションです。このオプションが無いと、アプリを起動したときにコマンドプロンプトも起動されます。
+
+https://web.plus-idea.net/2019/06/python-app-installer/
