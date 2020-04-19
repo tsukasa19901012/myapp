@@ -1,0 +1,5 @@
+kivy
+https://pyky.github.io/kivy-doc-ja/
+
+オセロサンプル および kvやロジックの確認の参考にしている。
+https://niwakomablog.com/
