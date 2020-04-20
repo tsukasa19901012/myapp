@@ -1,0 +1,30 @@
+<MyCanvasWidget>:
+    paint_id:paint_area
+    id: canvas_area
+    BoxLayout:
+        orientation: 'vertical'
+        height: root.height
+        width: root.width
+
+        MyPaintWidget:
+            id: paint_area
+            size_hint_y: 0.8
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: 0.1
+            Button:
+                text: "Clear"
+                ont_size: 30
+                on_release: app.clear_canvas()
+
+            Button:
+                text: 'Predict'
+                color: 1, 1, 1 , 1
+                font_size: 30
+                on_release: app.predict()
+                border: (2, 2, 2, 2)
+                x: 0
+                top: root.top
+                width: 80
+                height: 40
