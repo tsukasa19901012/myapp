@@ -9,6 +9,7 @@
             pos: self.pos
             size: self.size
 
+# タイトル画面
 <TitleWidget@FloatLayout>:
     Label:
         text: 'XENO'
@@ -24,6 +25,7 @@
         background_color: [0, 0, 0, 1] # 黒ボタン
         on_press: app.root.gotoSelectTurn()
 
+# 先攻後攻選択ボタン
 <BtnTurn@Button>:
     background_normal: ''
     font_size: 36
@@ -36,6 +38,7 @@
             rectangle: self.x, self.y, self.width, self.height
             width: 3
 
+# 先攻後攻選択画面
 <SelectTurn>:
     Label:
         text: '先攻か後攻を選択してください。'

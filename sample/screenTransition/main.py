@@ -1,27 +1,10 @@
 # -*- coding: utf-8 -*-
-from kivy.app import App
-from kivy.factory import Factory
-from kivy.uix.floatlayout import FloatLayout
-
 import japanize_kivy
+import sys
+sys.dont_write_bytecode = True
 
-class SelectTurn(FloatLayout):
-    def setFirstStrike(self):
-        # ロジックの初期設定
-        self.playerTurn = 1
-    def setSecondStrike(self):
-        # ロジックの初期設定
-        self.playerTurn = 2
-    pass
-
-class RootWidget(FloatLayout):
-    def gotoTitle(self):
-        self.clear_widgets()
-        self.add_widget(Factory.TitleWidget())
-    def gotoSelectTurn(self):
-        self.clear_widgets()
-        self.add_widget(Factory.SelectTurn())
-    pass
+from kivy.app import App
+from rootWidget import RootWidget
 
 class ScreenTransitionApp(App):
     def build(self):
