@@ -1,0 +1,62 @@
+# -*- coding: utf-8 -*-
+
+<XenoRootWidget>:
+    tittle: 'XENO'
+    canvas.before:
+        Color:
+            rgb: [1, 1, 1]
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+# CPUの手札
+<CpuHand@BoxLayout>:
+    Image:
+        source: 'card1.png'
+    Image:
+        source: 'card2.png'
+
+# CPUの捨て札
+<CpuDiscard@BoxLayout>:
+    Image:
+        source: 'card3.png'
+    Image:
+        source: 'card4.png'
+
+# プレイヤーの手札
+<PlayerHand@BoxLayout>:
+    Image:
+        source: 'card7.png'
+    Image:
+        source: 'card8.png'
+    
+# プレイヤーの捨て札
+<PlayerDiscard@BoxLayout>:
+    Image:
+        source: 'card5.png'
+    Image:
+        source: 'card6.png'
+
+# メイン画面
+<XenoMainWidget@FloatLayout>:
+    BoxLayout:
+        orientation: 'vertical' # 縦1列
+
+        CpuHand:
+            size_hint_y: 0.2
+
+        CpuDiscard:
+            size_hint_y: 0.2
+
+        BoxLayout:
+            orientation: 'horizontal' # 横1列
+            size_hint_y: 0.2
+
+            Image:
+                source: 'deck.png'
+
+        PlayerDiscard:
+            size_hint_y: 0.2
+
+        PlayerHand:
+            size_hint_y: 0.2
