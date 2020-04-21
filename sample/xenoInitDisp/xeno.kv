@@ -49,11 +49,24 @@
             size_hint_y: 0.2
 
         BoxLayout:
-            orientation: 'horizontal' # 横1列
-            size_hint_y: 0.2
+            orientation: 'vertical' # 縦1列
+            size_hint_y: 0.15
 
-            Image:
-                source: 'deck.png'
+            BoxLayout:
+                orientation: 'horizontal' # 横1列
+                size_hint_y: 0.5
+
+                Image:
+                    source: 'deck.png'
+
+                Image:
+                    source: 'reincarnation.png'
+            
+            Label:
+                text: 'デッキ枚数8枚'
+                color: [0, 0, 0, 1] # 黒文字
+                font_size: 36
+                size_hint_y: 0.5
 
         PlayerDiscard:
             size_hint_y: 0.2
