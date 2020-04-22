@@ -56,8 +56,6 @@ class XenoMainWidget(FloatLayout):
         # 画面更新
         self.refresh()
 
-        # ターンダイアログ
-        self.ids.xenoMainWidget.add_widget(Factory.TurnModal)
         pass
 
     # 画面を更新する

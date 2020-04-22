@@ -79,7 +79,3 @@
     orientation: 'horizontal' # 横1列
     size_hint_x: None
     width: self.minimum_width
-
-# ターン開始時モーダル
-<TurnModal@ModalView>:
-    text: 'プレイヤーのターンです。' if xenoMainWidget.turn == 1 else 'CPUのターンです。'
