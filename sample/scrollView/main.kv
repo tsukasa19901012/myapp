@@ -33,22 +33,25 @@ BoxLayout:
             text: "8"
 
 <ScrollWidgetBox@ScrollView>:
-    BoxLayout:
-        orientation: 'horizontal' # 横1列
+    ScrollBoxWidget:
+
+
+<ScrollBoxWidget@BoxLayout>:
+    orientation: 'horizontal' # 横1列
+    size_hint_x: None
+    width: self.minimum_width
+    Image:
         size_hint_x: None
-        width: self.minimum_width
-        Image:
-            size_hint_x: None
-            source: 'deck.png'
-            width: 500
-        Button:
-            size_hint_x: None
-            text: "2"
-        Label:
-            size_hint_x: None
-            text: "3"
-            width: 200
-        Image:
-            size_hint_x: None
-            width: 300
-            source: 'deck.png'
+        source: 'deck.png'
+        width: 500
+    Button:
+        size_hint_x: None
+        text: "2"
+    Label:
+        size_hint_x: None
+        text: "3"
+        width: 200
+    Image:
+        size_hint_x: None
+        width: 300
+        source: 'deck.png'
