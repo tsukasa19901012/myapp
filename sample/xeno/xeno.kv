@@ -1,0 +1,85 @@
+# -*- coding: utf-8 -*-
+
+<XenoRootWidget>:
+    tittle: 'XENO'
+    canvas.before:
+        Color:
+            rgb: [1, 1, 1]
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+# メイン画面
+<XenoMainWidget>:
+    id: xenoMainWidget
+    turn: 1 # 1:プレイヤーターン、2:CPUターン
+    deck: [1,2,3,4]
+    reincarnationCard: 10
+    playerHandList: []
+    cpuHandList: []
+    playerDiscardList: []
+    cpuDiscardList: []
+    BoxLayout:
+        id: xenoPlayWidget
+        orientation: 'vertical' # 縦1列
+        # CPUの手札
+        HandDiscardBox:
+            id: cpuHandBox
+            size_hint_y: 0.2
+            pos_hint: {'center_x': 0.5}
+        # CPUの捨て札
+        ScrollView:
+            id: cpuDiscardScroll
+            do_scroll_y: False
+            size_hint_y: 0.2
+            HandDiscardBox:
+                id: cpuDiscardBox
+        # デッキ
+        FloatLayout:
+            id: id: deckFloat
+            size_hint_y: 0.2
+            # 転生札画像
+            Image:
+                id: reincarnationImage
+                source: 'reincarnation.png' if xenoMainWidget.reincarnationCard != 0 else ''
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5 }
+            # デッキ画像
+            Image:
+                id: deckImage
+                source: 'deck.png'
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5 }
+            # デッキ枚数ラベル
+            Label:
+                id: deckLabel
+                text: str(len(xenoMainWidget.deck)) + '枚'
+                color: [0, 0, 0, 1] # 黒文字
+                font_size: 36
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5 }
+        # プレイヤーの捨て札
+        ScrollView:
+            id: cpuDiscardScroll
+            size_hint_y: 0.2
+            HandDiscardBox:
+                id: playerDiscardBox
+        # プレイヤーの手札
+        HandDiscardBox:
+            id: playerHandBox
+            size_hint_y: 0.2
+            pos_hint: {'center_x': 0.5}
+
+# カード画像
+<CardImage@Image>:
+    num: 0
+    size_hint_x: None
+    width: 200
+    source: 'deck.png'
+
+# 手札・捨て札の基礎BoxLayoutクラス
+<HandDiscardBox@BoxLayout>:
+    orientation: 'horizontal' # 横1列
+    size_hint_x: None
+    width: self.minimum_width
+
+# ターン開始時モーダル
+<TurnModal@ModalView>:
+    text: 'プレイヤーのターンです。' if xenoMainWidget.turn == 1 else 'CPUのターンです。'
