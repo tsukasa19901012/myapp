@@ -1,4 +1,15 @@
-ScrollView:
+BoxLayout:
+    orientation: 'vertical' # 縦1列
+
+    Label:
+        size_hint_y: 0.3
+        text: 'ラベル'
+    ScrollWidget:
+        size_hint_y: 0.3
+    ScrollWidgetBox:
+        size_hint_y: 0.3
+
+<ScrollWidget@ScrollView>:
     GridLayout:
         cols:2
         size_hint_y: None
@@ -20,11 +31,23 @@ ScrollView:
             text: "7"
         Button:
             text: "8"
+
+<ScrollWidgetBox@ScrollView>:
+    BoxLayout:
+        orientation: 'horizontal' # 横1列
+        size_hint_x: None
+        width: self.minimum_width
+        Label:
+            size_hint_x: None
+            text: "1"
+            width: 500
         Button:
-            text: "9"
-        Button:
-            text: "10"
-        Button:
-            text: "11"
-        Button:
-            text: "12"
+            size_hint_x: None
+            text: "2"
+        Label:
+            size_hint_x: None
+            text: "3"
+            width: 200
+        ToggleButton:
+            size_hint_x: None
+            text: "4"

@@ -1,4 +1,5 @@
 from kivy.app import App
+import japanize_kivy
 
 class MainApp(App):
     pass
