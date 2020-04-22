@@ -9,6 +9,85 @@
             pos: self.pos
             size: self.size
 
+# メイン画面
+<XenoMainWidget@FloatLayout>:
+    id: xenoMainWidget
+    deck: [1,2,3,4]
+    reincarnationCard: 10
+    playerHandList: []
+    cpuHandList: []
+    BoxLayout:
+        id: xenoPlayWidget
+        orientation: 'vertical' # 縦1列
+        # CPUの手札
+        HandDiscardBox:
+            id: cpuHandBox
+            size_hint_y: 0.2
+            pos_hint: {'center_x': 0.5}
+            CardImage:
+            CardImage:
+        # CPUの捨て札
+        ScrollView:
+            id: cpuDiscardScroll
+            do_scroll_y: False
+            size_hint_y: 0.2
+            HandDiscardBox:
+                id: cpuDiscardBox
+                CardImage:
+                    source: 'card1.png'
+                CardImage:
+                    source: 'card2.png'
+                CardImage:
+                    source: 'card3.png'
+                CardImage:
+                    source: 'card4.png' 
+                CardImage:
+                    source: 'card5.png'
+                CardImage:
+                    source: 'card6.png'
+        # デッキ
+        FloatLayout:
+            id: id: deckFloat
+            size_hint_y: 0.2
+            # 転生札画像
+            Image:
+                id: reincarnationImage
+                source: 'reincarnation.png' if xenoMainWidget.reincarnationCard != 0 else ''
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5 }
+            # デッキ画像
+            Image:
+                id: deckImage
+                source: 'deck.png'
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5 }
+            # デッキ枚数ラベル
+            Label:
+                id: deckLabel
+                text: str(len(xenoMainWidget.deck)) + '枚'
+                color: [0, 0, 0, 1] # 黒文字
+                font_size: 36
+                pos_hint: {'center_x': 0.5, 'center_y': 0.5 }
+        # プレイヤーの捨て札
+        ScrollView:
+            id: cpuDiscardScroll
+            size_hint_y: 0.2
+            HandDiscardBox:
+                id: playerDiscardBox
+                CardImage:
+                    source: 'card5.png'
+                CardImage:
+                    source: 'card6.png'
+                CardImage:
+                    source: 'card7.png'
+        # プレイヤーの手札
+        HandDiscardBox:
+            id: playerHandBox
+            size_hint_y: 0.2
+            pos_hint: {'center_x': 0.5}
+            CardImage:
+                source: 'card7.png'
+            CardImage:
+                source: 'card8.png'
+
 # カード画像
 <CardImage@Image>:
     num: 0
@@ -16,100 +95,8 @@
     width: 200
     source: 'deck.png'
 
-# 捨て札の基礎BoxLayoutクラス
-<DiscardBox@BoxLayout>:
+# 手札・捨て札の基礎BoxLayoutクラス
+<HandDiscardBox@BoxLayout>:
     orientation: 'horizontal' # 横1列
     size_hint_x: None
     width: self.minimum_width
-
-# CPUの手札
-<CpuHandBox@DiscardBox>:
-    id: cpuHandBox
-    CardImage:
-    CardImage:
-
-# CPUの捨て札
-<CpuDiscardBox@DiscardBox>:
-    id: cpuDiscardBox
-    CardImage:
-        source: 'card1.png'
-    CardImage:
-        source: 'card2.png'
-    CardImage:
-        source: 'card3.png'
-    CardImage:
-        source: 'card4.png' 
-    CardImage:
-        source: 'card5.png'
-    CardImage:
-        source: 'card6.png'
-
-<CpuDiscardScroll@ScrollView>:
-    id: cpuDiscardScroll
-    do_scroll_y: False
-    CpuDiscardBox:
-
-# プレイヤーの手札
-<PlayerHandBox@DiscardBox>:
-    CardImage:
-        source: 'card7.png'
-    CardImage:
-        source: 'card8.png'
-  
-# プレイヤーの捨て札
-<PlayerDiscardBox@DiscardBox>:
-    CardImage:
-        source: 'card5.png'
-    CardImage:
-        source: 'card6.png'
-
-<PlayerDiscardScroll@ScrollView>:
-    id: cpuDiscardScroll
-    PlayerDiscardBox:
-
-# デッキ
-<ReincarnationImage@Image>:
-    source: 'reincarnation.png'
-    height: 200
-    pos_hint: {'center_x': 0.5, 'center_y': 0.5 }
-
-<DeckImage@Image>:
-    source: 'deck.png'
-    width: 200
-    pos_hint: {'center_x': 0.5, 'center_y': 0.5 }
-
-<DeckLabel@Label>:
-    text: '8枚'
-    color: [0, 0, 0, 1] # 黒文字
-    font_size: 36
-    pos_hint: {'center_x': 0.5, 'center_y': 0.5 }
-
-<DeckFloat@FloatLayout>:
-    ReincarnationImage:
-    DeckImage:
-    DeckLabel:
-
-# プレイ画面
-<XenoPlayWidget@BoxLayout>
-    orientation: 'vertical' # 縦1列
-
-    CpuHandBox:
-        size_hint_y: 0.2
-        pos_hint: {'center_x': 0.5}
-
-    CpuDiscardScroll:
-        size_hint_y: 0.2
-
-    DeckFloat:
-        size_hint_y: 0.2
-
-    PlayerDiscardScroll:
-        size_hint_y: 0.2
-
-    PlayerHandBox:
-        size_hint_y: 0.2
-        pos_hint: {'center_x': 0.5}
-
-# メイン画面
-<XenoMainWidget@FloatLayout>:
-    XenoPlayWidget:
