@@ -9,67 +9,107 @@
             pos: self.pos
             size: self.size
 
+# カード画像
+<CardImage@Image>:
+    num: 0
+    size_hint_x: None
+    width: 200
+    source: 'deck.png'
+
+# 捨て札の基礎BoxLayoutクラス
+<DiscardBox@BoxLayout>:
+    orientation: 'horizontal' # 横1列
+    size_hint_x: None
+    width: self.minimum_width
+
 # CPUの手札
-<CpuHand@BoxLayout>:
-    Image:
-        source: 'card1.png'
-    Image:
-        source: 'card2.png'
+<CpuHandBox@DiscardBox>:
+    id: cpuHandBox
+    CardImage:
+    CardImage:
 
 # CPUの捨て札
-<CpuDiscard@BoxLayout>:
-    Image:
+<CpuDiscardBox@DiscardBox>:
+    id: cpuDiscardBox
+    CardImage:
+        source: 'card1.png'
+    CardImage:
+        source: 'card2.png'
+    CardImage:
         source: 'card3.png'
-    Image:
-        source: 'card4.png'
+    CardImage:
+        source: 'card4.png' 
+    CardImage:
+        source: 'card5.png'
+    CardImage:
+        source: 'card6.png'
+
+<CpuDiscardScroll@ScrollView>:
+    id: cpuDiscardScroll
+    do_scroll_y: False
+    CpuDiscardBox:
 
 # プレイヤーの手札
-<PlayerHand@BoxLayout>:
-    Image:
+<PlayerHandBox@DiscardBox>:
+    CardImage:
         source: 'card7.png'
-    Image:
+    CardImage:
         source: 'card8.png'
-    
+  
 # プレイヤーの捨て札
-<PlayerDiscard@BoxLayout>:
-    Image:
+<PlayerDiscardBox@DiscardBox>:
+    CardImage:
         source: 'card5.png'
-    Image:
+    CardImage:
         source: 'card6.png'
+
+<PlayerDiscardScroll@ScrollView>:
+    id: cpuDiscardScroll
+    PlayerDiscardBox:
+
+# デッキ
+<ReincarnationImage@Image>:
+    source: 'reincarnation.png'
+    height: 200
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5 }
+
+<DeckImage@Image>:
+    source: 'deck.png'
+    width: 200
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5 }
+
+<DeckLabel@Label>:
+    text: '8枚'
+    color: [0, 0, 0, 1] # 黒文字
+    font_size: 36
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5 }
+
+<DeckFloat@FloatLayout>:
+    ReincarnationImage:
+    DeckImage:
+    DeckLabel:
+
+# プレイ画面
+<XenoPlayWidget@BoxLayout>
+    orientation: 'vertical' # 縦1列
+
+    CpuHandBox:
+        size_hint_y: 0.2
+        pos_hint: {'center_x': 0.5}
+
+    CpuDiscardScroll:
+        size_hint_y: 0.2
+
+    DeckFloat:
+        size_hint_y: 0.2
+
+    PlayerDiscardScroll:
+        size_hint_y: 0.2
+
+    PlayerHandBox:
+        size_hint_y: 0.2
+        pos_hint: {'center_x': 0.5}
 
 # メイン画面
 <XenoMainWidget@FloatLayout>:
-    BoxLayout:
-        orientation: 'vertical' # 縦1列
-
-        CpuHand:
-            size_hint_y: 0.2
-
-        CpuDiscard:
-            size_hint_y: 0.2
-
-        BoxLayout:
-            orientation: 'vertical' # 縦1列
-            size_hint_y: 0.15
-
-            BoxLayout:
-                orientation: 'horizontal' # 横1列
-                size_hint_y: 0.5
-
-                Image:
-                    source: 'deck.png'
-
-                Image:
-                    source: 'reincarnation.png'
-            
-            Label:
-                text: 'デッキ枚数8枚'
-                color: [0, 0, 0, 1] # 黒文字
-                font_size: 36
-                size_hint_y: 0.5
-
-        PlayerDiscard:
-            size_hint_y: 0.2
-
-        PlayerHand:
-            size_hint_y: 0.2
+    XenoPlayWidget:

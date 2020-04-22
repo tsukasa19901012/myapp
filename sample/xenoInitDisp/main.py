@@ -4,6 +4,9 @@ import sys
 sys.dont_write_bytecode = True
 
 from kivy.app import App
+from kivy.core.window import Window
+Window.size = (480, 720)
+
 from kivy.factory import Factory
 from kivy.uix.floatlayout import FloatLayout
 
