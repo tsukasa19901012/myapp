@@ -69,13 +69,25 @@
 
 # カード画像
 <CardImage@Image>:
-    num: 0
     size_hint_x: None
     width: 200
     source: 'deck.png'
 
-# 手札・捨て札の基礎BoxLayoutクラス
+# 手札・捨て札の基底BoxLayoutクラス
 <HandDiscardBox@BoxLayout>:
     orientation: 'horizontal' # 横1列
     size_hint_x: None
     width: self.minimum_width
+
+# カードクリック時の吹き出し
+<CardBubble@Bubble>:
+    arrow_pos: 'left_mid'
+    size_hint: (None, None)
+    size: (250, 160)
+    BoxLayout:
+        orientation: 'vertical' # 縦1列
+        Button:
+            text: 'カード詳細'
+        Button:
+            text: 'カードを出す'
+

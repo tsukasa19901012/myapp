@@ -8,6 +8,7 @@ Window.size = (480, 720)
 
 from kivy.factory import Factory
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.image import Image
 
 # カード情報クラス
 class Card:
@@ -17,6 +18,14 @@ class Card:
         self.efficacy = efficacy # カード効果
         self.efficacyContent = efficacyContent # カード効果内容
         self.image = image # カード画像
+
+# カード画像クラス
+class CardImage(Image):
+    def on_touch_down(self, touch):
+        spos = touch.spos
+        xenoMainWidget = self.parent.parent.parent
+        xenoMainWidget.add_widget(Factory.CardBubble(pos_hint={'x': spos[0], 'center_y': spos[1] }))
+        pass
 
 class XenoMainWidget(FloatLayout):
     # カードの辞書
