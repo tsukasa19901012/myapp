@@ -19,23 +19,52 @@ class Card:
         self.efficacyContent = efficacyContent # カード効果内容
         self.image = image # カード画像
 
+# カード詳細画面
+class CardInFoModal(Factory.ModalView):
+    def __init__(self, card):
+        super().__init__()
+        # カードタイトル
+        self.ids.cardTittle.text = '【' + card.rank + '】' + card.name
+        # カード画像
+        self.ids.cardImage.source = card.image
+        # カード効果
+        self.ids.cardEfficacy.text = '【' + card.efficacy + '】' + card.efficacyContent
+
+
 # カード画像クラス
 class CardImage(Image):
+    # 表カード押下時
     def on_touch_down(self, touch):
         # クリック位置
         spos = touch.spos
         opos = touch.opos
-
         # カードが裏向きのもの（cpuの手札の場合）
-        if self.source == 'deck.png' :
+        if self.num == 0 :
             return
-
         # 対象のカード上でクリックした場合
         if self.x <= opos[0] <= self.right and self.y <= opos[1] <= self.top :
-            modal = Factory.CardBubbleModal(attach_to=self, pos_hint={'x': spos[0], 'center_y': spos[1] })
+            modal = Factory.CardBubbleModal(pos_hint={'x': spos[0], 'center_y': spos[1] })
+            # カードが10の場合
+            if self.num == 10 :
+                # カードを出すボタンを除外
+                modal.ids.cardBubble.remove_widget(modal.ids.playCardButton)
+            else:
+                # カードを出すボタンのイベントを追加
+                pass
+            # 吹き出しのカード詳細ボタンのイベントを追加
+            modal.ids.caedInfoButton.bind(on_press=self.on_showCardInFoModal)
+            # 吹き出しを表示
             modal.open()
             pass
-        
+        pass
+
+    # カード詳細押下時
+    def on_showCardInFoModal(self, obj):
+        cardInFoModal = Factory.CardInFoModal(card = self.card)
+        # 吹き出しを削除
+        obj.parent.parent.parent.dismiss()
+        # カード詳細を表示
+        cardInFoModal.open()
         pass
 
 class XenoMainWidget(FloatLayout):
@@ -83,11 +112,14 @@ class XenoMainWidget(FloatLayout):
         # プレイヤーの手札を更新
         self.ids.playerHandBox.clear_widgets()
         for cardNum in self.playerHandList:
-            self.ids.playerHandBox.add_widget(Factory.CardImage(source=self.cardDict[cardNum].image))
+            cardImage = Factory.CardImage(source=self.cardDict[cardNum].image )
+            cardImage.num = cardNum
+            cardImage.card = self.cardDict[cardNum]
+            self.ids.playerHandBox.add_widget(cardImage)
         # プレイヤーの捨て札を更新
         self.ids.playerDiscardBox.clear_widgets()
         for cardNum in self.playerDiscardList:
-            self.ids.playerDiscardBox.add_widget(Factory.CardImage(source=self.cardDict[cardNum].image))
+            self.ids.playerDiscardBox.add_widget(Factory.CardImage(source=self.cardDict[cardNum].image, num=cardNum))
         # cpuの手札を更新
         self.ids.cpuHandBox.clear_widgets()
         for cardNum in self.cpuHandList:
@@ -95,7 +127,7 @@ class XenoMainWidget(FloatLayout):
         # cpuの捨て札を更新
         self.ids.cpuDiscardBox.clear_widgets()
         for cardNum in self.cpuDiscardList:
-            self.ids.cpuDiscardBox.add_widget(Factory.CardImage(source=self.cardDict[cardNum].image))
+            self.ids.cpuDiscardBox.add_widget(Factory.CardImage(source=self.cardDict[cardNum].image, num=cardNum))
         pass
 
     pass

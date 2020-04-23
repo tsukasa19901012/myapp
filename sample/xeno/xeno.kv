@@ -71,6 +71,8 @@
 <CardImage>:
     size_hint_x: None
     width: 200
+    num: 0
+    card:
     source: 'deck.png'
 
 # 手札・捨て札の基底BoxLayoutクラス
@@ -81,17 +83,40 @@
 
 # カードクリック時の吹き出し
 <CardBubbleModal@ModalView>:
+    id: cardBubbleModal
     size_hint: (None, None)
     size: (250, 160)
     background_color: [0, 0, 0, 0]
-    attach_to: 
     Bubble:
+        id: cardBubble
         arrow_pos: 'left_mid'
         size_hint: (None, None)
         size: (250, 160)
         orientation: 'vertical' # 縦1列
         Button:
+            id: caedInfoButton
             text: 'カード詳細'
         Button:
+            id: playCardButton
             text: 'カードを出す'
 
+# カード詳細画面
+<CardInFoModal>:
+    id: cardInFoModal
+    size_hint: (None, None)
+    size: (360, 540)
+    BoxLayout:
+        orientation: 'vertical' # 縦1列 
+        Label:
+            text: 'カード詳細'
+        Label:
+            id: cardTittle
+            text: 
+        Image:
+            id: cardImage
+            source: ''
+        Label:
+            text: 'カード効果'
+        Label:
+            id: cardEfficacy
+            text:
