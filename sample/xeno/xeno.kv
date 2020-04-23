@@ -68,7 +68,7 @@
             pos_hint: {'center_x': 0.5}
 
 # カード画像
-<CardImage@Image>:
+<CardImage>:
     size_hint_x: None
     width: 200
     source: 'deck.png'
@@ -80,11 +80,15 @@
     width: self.minimum_width
 
 # カードクリック時の吹き出し
-<CardBubble@Bubble>:
-    arrow_pos: 'left_mid'
+<CardBubbleModal@ModalView>:
     size_hint: (None, None)
     size: (250, 160)
-    BoxLayout:
+    background_color: [0, 0, 0, 0]
+    attach_to: 
+    Bubble:
+        arrow_pos: 'left_mid'
+        size_hint: (None, None)
+        size: (250, 160)
         orientation: 'vertical' # 縦1列
         Button:
             text: 'カード詳細'

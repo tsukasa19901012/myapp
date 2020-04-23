@@ -22,9 +22,20 @@ class Card:
 # カード画像クラス
 class CardImage(Image):
     def on_touch_down(self, touch):
+        # クリック位置
         spos = touch.spos
-        xenoMainWidget = self.parent.parent.parent
-        xenoMainWidget.add_widget(Factory.CardBubble(pos_hint={'x': spos[0], 'center_y': spos[1] }))
+        opos = touch.opos
+
+        # カードが裏向きのもの（cpuの手札の場合）
+        if self.source == 'deck.png' :
+            return
+
+        # 対象のカード上でクリックした場合
+        if self.x <= opos[0] <= self.right and self.y <= opos[1] <= self.top :
+            modal = Factory.CardBubbleModal(attach_to=self, pos_hint={'x': spos[0], 'center_y': spos[1] })
+            modal.open()
+            pass
+        
         pass
 
 class XenoMainWidget(FloatLayout):
