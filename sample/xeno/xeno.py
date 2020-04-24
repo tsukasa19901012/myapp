@@ -28,7 +28,6 @@ class CardInFoModal(Factory.ModalView):
         # カード効果
         self.ids.cardEfficacy.text = '【' + card.efficacy + '】' + card.efficacyContent
 
-
 # カード画像クラス
 class CardImage(Factory.Image):
     # 表カード押下時
@@ -187,19 +186,27 @@ class XenoMainWidget(Factory.FloatLayout):
     # 6のカードを出す処理
     def sixfficacy(self):
         # 互いの手札を取得
-        playerCard = 3
-        cpuCard = 6
+        playerCard = self.playerHandList[0]
+        cpuCard = self.cpuHandList[0]
 
         # 勝利判定
+        resultText = ''
         if playerCard == cpuCard:
             # 引き分け
+            resultText = '結果は引き分けです。'
             pass
         elif playerCard > cpuCard:
             # プレイヤーの勝ち
+            resultText = 'プレイヤーの勝ちです。'
             pass
         else:
             # CPUの勝ち
+            resultText = 'CPUの勝ちです。'
             pass
+        # 結果モーダル
+        sixResultModal = Factory.SixResultModal()
+        sixResultModal.resultLabelText = resultText
+        sixResultModal.open()
         pass
 
     # 画面を更新する
