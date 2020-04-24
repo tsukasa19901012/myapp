@@ -338,7 +338,7 @@ class XenoRootWidget(Factory.FloatLayout):
 class XenoApp(App):
     def build(self):
         self.title = 'XENO'
-        self.icon = 'icon.png'
+        self.icon = 'icon.ico'
         self.root = XenoRootWidget()
         self.root.gotoTitle()
         return self.root
