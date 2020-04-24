@@ -80,6 +80,13 @@ class CardImage(Factory.Image):
         obj.parent.parent.parent.dismiss()
         # 画面更新
         xenoMainWidget.refresh()
+        # カード効果発動
+        endFlg = xenoMainWidget.activationCardEffect(cardNum)
+        # ゲーム終了か確認
+        if endFlg == 1:
+            # タイトルに戻る
+            root = App.get_running_app().root
+            return root.gotoTitle()
         # デッキがない場合
         if len(xenoMainWidget.deck) == 0:
             # 対決を行う
@@ -148,6 +155,8 @@ class XenoMainWidget(Factory.FloatLayout):
         self.turn = 2
         # ドローする
         self.drawDeck()
+        # 画面更新
+        self.refresh()
         # cpuがカードを出す
         self.cpuPlayCard()
         # プレイヤーにドローさせる。
@@ -173,7 +182,41 @@ class XenoMainWidget(Factory.FloatLayout):
         self.cpuDiscardList.append(cardNum)
         # 画面更新
         self.refresh() 
+        # カード効果発動
+        endFlg = self.activationCardEffect(cardNum)
+        # ゲーム終了か確認
+        if endFlg == 1:
+            # タイトルに戻る
+            root = App.get_running_app().root
+            return root.gotoTitle()
+        # 画面更新
+        self.refresh() 
         pass
+
+    # カード効果発動
+    def activationCardEffect(self, cardNum):
+        endFlg = 0
+        if 1 == cardNum :
+            pass
+        elif 2 == cardNum :
+            pass
+        elif 3 == cardNum :
+            pass
+        elif 4 == cardNum :
+            pass
+        elif 5 == cardNum :
+            pass
+        elif 6 == cardNum :
+            endFlg = self.sixfficacy()
+        elif 7 == cardNum :
+            pass
+        elif 8 == cardNum :
+            pass
+        elif 9 == cardNum :
+            pass
+        else :
+            pass
+        return endFlg
 
     # 1のカードを出す処理
     def oneEfficacy(self):
@@ -189,25 +232,35 @@ class XenoMainWidget(Factory.FloatLayout):
         playerCard = self.playerHandList[0]
         cpuCard = self.cpuHandList[0]
 
-        # 勝利判定
-        resultText = ''
-        if playerCard == cpuCard:
-            # 引き分け
-            resultText = '結果は引き分けです。'
-            pass
-        elif playerCard > cpuCard:
-            # プレイヤーの勝ち
-            resultText = 'プレイヤーの勝ちです。'
-            pass
+        # 1枚目か2枚目かを判定
+        if 2 == self.playerDiscardList.count(6) + self.cpuDiscardList.count(6) :
+            # 2枚目の場合
+            # 勝利判定
+            resultText = ''
+            if playerCard == cpuCard:
+                # 引き分け
+                resultText = '結果は引き分けです。'
+                pass
+            elif playerCard > cpuCard:
+                # プレイヤーの勝ち
+                resultText = 'プレイヤーの勝ちです。'
+                pass
+            else:
+                # CPUの勝ち
+                resultText = 'CPUの勝ちです。'
+                pass
+            # 結果モーダル
+            sixSecoundResultModal = Factory.SixSecoundResultModal()
+            sixSecoundResultModal.resultLabelText = resultText
+            sixSecoundResultModal.open()
+            return 1
         else:
-            # CPUの勝ち
-            resultText = 'CPUの勝ちです。'
-            pass
-        # 結果モーダル
-        sixResultModal = Factory.SixResultModal()
-        sixResultModal.resultLabelText = resultText
-        sixResultModal.open()
-        pass
+            # 1枚目の場合
+            sixFirstResultModal = Factory.SixFirstResultModal()
+            sixFirstResultModal.resultPlayerLabelText = 'プレイヤーの手札は' + str(playerCard)
+            sixFirstResultModal.resultCpuLabelText = 'CPUの手札は' + str(cpuCard)
+            sixFirstResultModal.open()
+            return 0
 
     # 画面を更新する
     def refresh(self):
@@ -248,6 +301,7 @@ class SelectTurn(Factory.FloatLayout):
         App.get_running_app().root.gotoInit(2)
     pass
 
+# 画面切替ウィジェット
 class XenoRootWidget(Factory.FloatLayout):
     def gotoTitle(self):
         self.clear_widgets()

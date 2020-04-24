@@ -184,8 +184,26 @@
             text:
 
 # 6の結果画面
-<SixResultModal@ModalView>:
-    id: cardInFoModal
+<SixFirstResultModal@ModalView>:
+    id: sixFirstResultModal
+    size_hint: None, None
+    size: 720, 1080
+    resultPlayerLabelText: ''
+    resultCpuLabelText: ''
+    on_touch_down:
+        self.dismiss(force=True)
+    BoxLayout:
+        orientation: 'vertical' # 縦1列
+        padding: 50
+        Label:
+            id: resultCpuLabel
+            text: sixFirstResultModal.resultCpuLabelText
+        Label:
+            id: resultPlayerLabel
+            text: sixFirstResultModal.resultPlayerLabelText
+
+<SixSecoundResultModal@ModalView>:
+    id: sixSecoundResultModal
     size_hint: None, None
     size: 720, 1080
     resultLabelText: ''
@@ -196,4 +214,4 @@
         padding: 50
         Label:
             id: resultLabel
-            text: cardInFoModal.resultLabelText
+            text: sixSecoundResultModal.resultLabelText
