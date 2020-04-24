@@ -70,6 +70,7 @@
     cpuDiscardList: []
     BoxLayout:
         id: xenoPlayWidget
+        padding: 50
         orientation: 'vertical' # 縦1列
         # CPUの手札
         HandDiscardBox:
@@ -153,20 +154,29 @@
 # カード詳細画面
 <CardInFoModal>:
     id: cardInFoModal
-    size_hint: (None, None)
-    size: (360, 540)
+    size_hint: None, None
+    size: 720, 1080
     BoxLayout:
-        orientation: 'vertical' # 縦1列 
+        orientation: 'vertical' # 縦1列
+        padding: 50
         Label:
+            size_hint_y: 0.1
             text: 'カード詳細'
         Label:
+            size_hint_y: 0.1
             id: cardTittle
             text: 
         Image:
+            size_hint_y: 0.5
             id: cardImage
             source: ''
         Label:
+            size_hint_y: 0.1
             text: 'カード効果'
         Label:
             id: cardEfficacy
+            size_hint_y: 0.2
+            text_size: self.size
+            halign: 'left'
+            valign: 'top'
             text:

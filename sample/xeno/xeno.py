@@ -81,7 +81,13 @@ class CardImage(Factory.Image):
         obj.parent.parent.parent.dismiss()
         # 画面更新
         xenoMainWidget.refresh()
-
+        # デッキがない場合
+        if len(xenoMainWidget.deck) == 0:
+            # 対決を行う
+            xenoMainWidget.sixfficacy()
+            # タイトルに戻る
+            root = App.get_running_app().root
+            return root.gotoTitle()
         # cpu処理
         xenoMainWidget.cpuTurnLogic()     
         pass
@@ -138,11 +144,7 @@ class XenoMainWidget(Factory.FloatLayout):
     def cpuTurnLogic(self):
         # デッキがドローできるか確認
         if len(self.deck) == 0:
-            # 手札の対決を行う
-            pass
-            # タイトルに戻る
-            root = App.get_running_app().root
-            return root.gotoTitle()
+            return
         # ターンフラグをcpuにする
         self.turn = 2
         # ドローする
@@ -180,6 +182,24 @@ class XenoMainWidget(Factory.FloatLayout):
 
     # 2のカードの出す処理
     def twoEfficacy(self):
+        pass
+
+    # 6のカードを出す処理
+    def sixfficacy(self):
+        # 互いの手札を取得
+        playerCard = 3
+        cpuCard = 6
+
+        # 勝利判定
+        if playerCard == cpuCard:
+            # 引き分け
+            pass
+        elif playerCard > cpuCard:
+            # プレイヤーの勝ち
+            pass
+        else:
+            # CPUの勝ち
+            pass
         pass
 
     # 画面を更新する
