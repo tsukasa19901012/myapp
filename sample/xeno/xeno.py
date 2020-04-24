@@ -7,8 +7,6 @@ from kivy.core.window import Window
 Window.size = (480, 720)
 
 from kivy.factory import Factory
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.image import Image
 
 # カード情報クラス
 class Card:
@@ -32,7 +30,7 @@ class CardInFoModal(Factory.ModalView):
 
 
 # カード画像クラス
-class CardImage(Image):
+class CardImage(Factory.Image):
     # 表カード押下時
     def on_touch_down(self, touch):
         # クリック位置
@@ -88,7 +86,7 @@ class CardImage(Image):
         xenoMainWidget.cpuTurnLogic()     
         pass
 
-class XenoMainWidget(FloatLayout):
+class XenoMainWidget(Factory.FloatLayout):
     # カードの辞書
     cardDict = {
           1: Card("1", "少年", "革命", "1枚目の捨て札は何の効果も発動しないが、場に2枚目が出た時には皇帝と同じ効果「公開処刑」が発動する", "card1.png")
@@ -196,7 +194,7 @@ class XenoMainWidget(FloatLayout):
         pass
 
     pass
-class XenoRootWidget(FloatLayout):
+class XenoRootWidget(Factory.FloatLayout):
     def gotoInit(self):
         self.clear_widgets()
         self.add_widget(Factory.XenoMainWidget())
