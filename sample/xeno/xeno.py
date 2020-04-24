@@ -86,6 +86,7 @@ class CardImage(Factory.Image):
         xenoMainWidget.cpuTurnLogic()     
         pass
 
+# メイン画面
 class XenoMainWidget(Factory.FloatLayout):
     # カードの辞書
     cardDict = {
@@ -122,9 +123,6 @@ class XenoMainWidget(Factory.FloatLayout):
 
     # デッキから1枚ドローする
     def drawDeck(self):
-        # デッキがドローできるか確認
-        if len(self.deck) == 0:
-            return
         # ターンの確認
         if self.turn == 1:
             # プレイヤーのターン
@@ -138,6 +136,13 @@ class XenoMainWidget(Factory.FloatLayout):
 
     # CPUのターン処理
     def cpuTurnLogic(self):
+        # デッキがドローできるか確認
+        if len(self.deck) == 0:
+            # 手札の対決を行う
+            pass
+            # タイトルに戻る
+            root = App.get_running_app().root
+            return root.gotoTitle()
         # ターンフラグをcpuにする
         self.turn = 2
         # ドローする
@@ -206,10 +211,24 @@ class XenoMainWidget(Factory.FloatLayout):
             cardImage.card = self.cardDict[cardNum]
             self.ids.cpuDiscardBox.add_widget(cardImage)
         pass
-
     pass
+
+# 先攻後攻選択画面
+class SelectTurn(Factory.FloatLayout):
+    def setFirstStrike(self):
+        App.get_running_app().root.gotoInit(1)
+    def setSecondStrike(self):
+        App.get_running_app().root.gotoInit(2)
+    pass
+
 class XenoRootWidget(Factory.FloatLayout):
-    def gotoInit(self):
+    def gotoTitle(self):
+        self.clear_widgets()
+        self.add_widget(Factory.TitleWidget())
+    def gotoSelectTurn(self):
+        self.clear_widgets()
+        self.add_widget(Factory.SelectTurn())
+    def gotoInit(self, turn):
         self.clear_widgets()
         self.add_widget(Factory.XenoMainWidget())
         pass
@@ -219,7 +238,7 @@ class XenoApp(App):
     def build(self):
         self.title = 'XENO'
         root = XenoRootWidget()
-        root.gotoInit()
+        root.gotoTitle()
         return root
 
 if __name__ == '__main__':
