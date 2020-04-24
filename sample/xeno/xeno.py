@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
-import japanize_kivy, sys, random
+import sys, random
 sys.dont_write_bytecode = True
 
+from kivy.core.text import LabelBase, DEFAULT_FONT
+from kivy.resources import resource_add_path
+LabelBase.register(DEFAULT_FONT, "ipaexg.ttf")
 from kivy.app import App
 from kivy.core.window import Window
 Window.size = (480, 720)
