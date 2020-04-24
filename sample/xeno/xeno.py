@@ -132,6 +132,8 @@ class XenoMainWidget(Factory.FloatLayout):
         else:
             # cpuのターン
             self.cpuHandList.append(self.deck.pop(0))
+        # 画面更新
+        self.refresh() 
         pass
 
     # CPUのターン処理
@@ -152,7 +154,11 @@ class XenoMainWidget(Factory.FloatLayout):
     # cpuがカードを出す
     def cpuPlayCard(self):
         # ランダムにカードを選択する
-        cardNum = self.cpuHandList[random.randint(0,1)]
+        cardNum = 0
+        while True:
+            cardNum = self.cpuHandList[random.randint(0,1)]
+            if cardNum != 10:
+                break
         # カードが手札に含まれているか確認
         if not cardNum in self.cpuHandList:
             return
@@ -161,6 +167,14 @@ class XenoMainWidget(Factory.FloatLayout):
         self.cpuDiscardList.append(cardNum)
         # 画面更新
         self.refresh() 
+        pass
+
+    # 1のカードを出す処理
+    def oneEfficacy(self):
+        pass
+
+    # 2のカードの出す処理
+    def twoEfficacy(self):
         pass
 
     # 画面を更新する
