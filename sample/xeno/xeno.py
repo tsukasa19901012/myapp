@@ -197,7 +197,7 @@ class XenoMainWidget(Factory.FloatLayout):
     def activationCardEffect(self, cardNum):
         endFlg = 0
         if 1 == cardNum :
-            pass
+            endFlg = self.oneEfficacy()
         elif 2 == cardNum :
             pass
         elif 3 == cardNum :
@@ -211,7 +211,7 @@ class XenoMainWidget(Factory.FloatLayout):
         elif 7 == cardNum :
             pass
         elif 8 == cardNum :
-            pass
+            endFlg = self.eightEfficacy()
         elif 9 == cardNum :
             pass
         else :
@@ -220,10 +220,14 @@ class XenoMainWidget(Factory.FloatLayout):
 
     # 1のカードを出す処理
     def oneEfficacy(self):
-        pass
+        return 0
 
     # 2のカードの出す処理
     def twoEfficacy(self):
+        pass
+
+    # 3のカードを出す処理
+    def threeEfficacy(self):
         pass
 
     # 6のカードを出す処理
@@ -261,6 +265,19 @@ class XenoMainWidget(Factory.FloatLayout):
             sixFirstResultModal.resultCpuLabelText = 'CPUの手札は' + str(cpuCard)
             sixFirstResultModal.open()
             return 0
+
+    # 8のカードを出す処理
+    def eightEfficacy(self):
+        # プレイヤーとCPUのカードを交換
+        playerCard = self.playerHandList[0]
+        cpuCard = self.cpuHandList[0]
+        self.playerHandList[0] = cpuCard
+        self.cpuHandList[0] = playerCard
+        return 0
+
+    # 9のカードを出す処理
+    def nineEfficacy(self):
+        pass
 
     # 画面を更新する
     def refresh(self):
