@@ -82,7 +82,10 @@ class CardImage(Image):
         # 吹き出しを削除
         obj.parent.parent.parent.dismiss()
         # 画面更新
-        xenoMainWidget.refresh()        
+        xenoMainWidget.refresh()
+
+        # cpu処理
+        xenoMainWidget.cpuTurnLogic()     
         pass
 
 class XenoMainWidget(FloatLayout):
@@ -112,6 +115,18 @@ class XenoMainWidget(FloatLayout):
         self.playerHandList.append(self.deck.pop(0))
         self.cpuHandList.append(self.deck.pop(0))
 
+        # ドローする
+        self.drawDeck()
+        
+        # 画面更新
+        self.refresh()
+        pass
+
+    # デッキから1枚ドローする
+    def drawDeck(self):
+        # デッキがドローできるか確認
+        if len(self.deck) == 0:
+            return
         # ターンの確認
         if self.turn == 1:
             # プレイヤーのターン
@@ -119,10 +134,35 @@ class XenoMainWidget(FloatLayout):
         else:
             # cpuのターン
             self.cpuHandList.append(self.deck.pop(0))
-        
-        # 画面更新
-        self.refresh()
+        pass
 
+    # CPUのターン処理
+    def cpuTurnLogic(self):
+        # ターンフラグをcpuにする
+        self.turn = 2
+        # ドローする
+        self.drawDeck()
+        # cpuがカードを出す
+        self.cpuPlayCard()
+        # プレイヤーにドローさせる。
+        self.turn = 1
+        self.drawDeck()
+        # 画面更新
+        self.refresh() 
+        pass
+
+    # cpuがカードを出す
+    def cpuPlayCard(self):
+        # ランダムにカードを選択する
+        cardNum = self.cpuHandList[random.randint(0,1)]
+        # カードが手札に含まれているか確認
+        if not cardNum in self.cpuHandList:
+            return
+        # 手札から捨て札にカードを出す
+        self.cpuHandList.pop(self.cpuHandList.index(cardNum))
+        self.cpuDiscardList.append(cardNum)
+        # 画面更新
+        self.refresh() 
         pass
 
     # 画面を更新する
