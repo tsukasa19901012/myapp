@@ -121,7 +121,7 @@ class CardImage(Factory.Image):
         # デッキがない場合
         if len(xenoMainWidget.deck) == 0:
             # 対決を行う
-            xenoMainWidget.sixfficacy()
+            xenoMainWidget.sixEfficacy()
             # タイトルに戻る
             root = App.get_running_app().root
             return root.gotoTitle()
@@ -194,6 +194,13 @@ class XenoMainWidget(Factory.FloatLayout):
         self.refresh()
         # cpuがカードを出す
         self.cpuPlayCard()
+        # デッキがない場合
+        if len(self.deck) == 0:
+            # 対決を行う
+            self.sixEfficacy()
+            # タイトルに戻る
+            root = App.get_running_app().root
+            return root.gotoTitle()
         # プレイヤーにドローさせる。
         self.turn = 1
         self.drawDeck()
@@ -234,9 +241,9 @@ class XenoMainWidget(Factory.FloatLayout):
         def oneEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.add_widget(Factory.Label(text='あなたは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
             else:
-                self.modal.add_widget(Factory.Label(text='CPUは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
             self.modal.open()
             return 0
 
@@ -244,9 +251,9 @@ class XenoMainWidget(Factory.FloatLayout):
         def twoEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.add_widget(Factory.Label(text='あなたは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
             else:
-                self.modal.add_widget(Factory.Label(text='CPUは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
             self.modal.open()
             return 0
 
@@ -268,9 +275,9 @@ class XenoMainWidget(Factory.FloatLayout):
         def fourEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.add_widget(Factory.Label(text='あなたは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
             else:
-                self.modal.add_widget(Factory.Label(text='CPUは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
             self.modal.open()
             return 0
 
@@ -278,14 +285,14 @@ class XenoMainWidget(Factory.FloatLayout):
         def fiveEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.add_widget(Factory.Label(text='あなたは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
             else:
-                self.modal.add_widget(Factory.Label(text='CPUは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
             self.modal.open()
             return 0
 
         # 6のカードを出す処理
-        def sixfficacy(self):
+        def sixEfficacy(self):
             returnFlg = 0
             # 互いの手札を取得
             playerCard = self.playerHandList[0]
@@ -332,9 +339,9 @@ class XenoMainWidget(Factory.FloatLayout):
         def sevenEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.add_widget(Factory.Label(text='あなたは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
             else:
-                self.modal.add_widget(Factory.Label(text='CPUは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
             self.modal.open()
             return 0
 
@@ -342,9 +349,10 @@ class XenoMainWidget(Factory.FloatLayout):
         def eightEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.add_widget(Factory.Label(text='あなたは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
             else:
-                self.modal.add_widget(Factory.Label(text='CPUは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
+            self.modal.ids.box.add_widget(Factory.Label(text='手札を交換します。'))
             # プレイヤーとCPUのカードを交換
             playerCard = self.playerHandList[0]
             cpuCard = self.cpuHandList[0]
@@ -357,9 +365,9 @@ class XenoMainWidget(Factory.FloatLayout):
         def nineEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.add_widget(Factory.Label(text='あなたは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
             else:
-                self.modal.add_widget(Factory.Label(text='CPUは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
             self.modal.open()
             return 0
 
@@ -376,7 +384,7 @@ class XenoMainWidget(Factory.FloatLayout):
         elif 5 == cardNum :
             endFlg = fiveEfficacy(self)
         elif 6 == cardNum :
-            endFlg = sixfficacy(self)
+            endFlg = sixEfficacy(self)
         elif 7 == cardNum :
             endFlg = sevenEfficacy(self)
         elif 8 == cardNum :
