@@ -254,9 +254,13 @@ class XenoMainWidget(Factory.FloatLayout):
         def threeEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.add_widget(Factory.Label(text='あなたは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
+                cpuCard = self.cpuHandList[0]
+                self.modal.ids.box.add_widget(Factory.Label(text='CPUの手札は' + str(cpuCard) + 'です。'))
             else:
-                self.modal.add_widget(Factory.Label(text='CPUは' + str(cardNum) + 'を出しました。'))
+                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
+                playerCard = self.playerHandList[0]
+                self.modal.ids.box.add_widget(Factory.Label(text='プレイヤーの手札は' + str(playerCard) + 'です。'))
             self.modal.open()
             return 0
 

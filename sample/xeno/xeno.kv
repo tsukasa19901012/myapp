@@ -227,9 +227,16 @@
 
 # カード効果画面基底クラス
 <BasicEfficacyModal@ModalView>:
+    id: basicEfficacyModal
     size_hint: None, None
     size: 720, 1080
     resultLabelText: ''
     on_touch_down:
         self.dismiss(force=True)
-    
+    BoxLayout:
+        id: box
+        orientation: 'vertical' # 縦1列
+        padding: 50
+        Label:
+            size_hint_y: 0.2
+            text: basicEfficacyModal.resultLabelText
