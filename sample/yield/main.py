@@ -9,33 +9,54 @@ Window.size = (480, 720)
 
 from kivy.factory import Factory
 
-def start_generator(gen):
-    def step_gen(*args, **kwargs):
+import types
+from kivy.clock import Clock
+
+def start_coro(coro):
+    def step_coro(*args, **kwargs):
         try:
-            gen.send((args, kwargs, ))(step_gen)
+            coro.send((args, kwargs, ))(step_coro)
         except StopIteration:
             pass
-
     try:
-        gen.send(None)(step_gen)
+        coro.send(None)(step_coro)
     except StopIteration:
         pass
 
+
+async def thread(func, *args, **kwargs):
+    from threading import Thread
+    return_value = None
+    is_finished = False
+    def wrapper(*args, **kwargs):
+        nonlocal return_value, is_finished
+        return_value = func(*args, **kwargs)
+        is_finished = True
+    Thread(target=wrapper, args=args, kwargs=kwargs).start()
+    while not is_finished:
+        await sleep(3)
+    return return_value
+
+
+@types.coroutine
+def sleep(duration):
+    args, kwargs = yield lambda step_coro: Clock.schedule_once(step_coro, duration)
+    return args[0]
+
+
+@types.coroutine
 def event(ed, name):
     bind_id = None
-    step_gen = None
-
-    def bind(step_gen_):
-        nonlocal bind_id, step_gen
+    step_coro = None
+    def bind(step_coro_):
+        nonlocal bind_id, step_coro
         bind_id = ed.fbind(name, callback)
         assert bind_id > 0  # bindingに成功したか確認
-        step_gen = step_gen_
-
+        step_coro = step_coro_
     def callback(*args, **kwargs):
         ed.unbind_uid(name, bind_id)
-        step_gen(*args, **kwargs)
-
-    return bind
+        step_coro(*args, **kwargs)
+    return (yield bind)
 
 class ModalWindow(Factory.ModalView):
     value = Factory.StringProperty()
@@ -51,15 +72,21 @@ class ModalWindow(Factory.ModalView):
 
 class StartButton(Factory.Button):    
     def on_press(self):
-        start_generator(self.some_task())
+        start_coro(self.some_task())
 
-    def some_task(self):
+    async def some_task(self):
         view = ModalWindow()
+        view.ids.label.text = '1つめ'
         print('モーダル画面表示呼び出し START')
         view.open()
-        print('view.value = ', view.value)
-        yield event(view, 'on_dismiss')  # modalが閉じられるまで待つ
-        print('view.value = ', view.value)
+        print('view.value = ', view.value) # view.value =  0
+        await event(view, 'on_dismiss')  # modalが閉じられるまで待つ
+        print('view.value = ', view.value)# view.value =  1
+        print('view再定義')
+        view = ModalWindow()
+        view.ids.label.text = '2つめ'
+        view.open()
+        await event(view, 'on_dismiss')  # modalが閉じられるまで待つ
         print('モーダル画面表示呼び出し END')
 
 class MainRootWidget(Factory.FloatLayout):
