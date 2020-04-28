@@ -202,23 +202,21 @@ class XenoMainWidget(Factory.FloatLayout):
         if 1 == cardNum :
             endFlg = self.oneEfficacy()
         elif 2 == cardNum :
-            pass
+            endFlg = self.twoEfficacy()
         elif 3 == cardNum :
-            pass
+            endFlg = self.threeEfficacy()
         elif 4 == cardNum :
-            pass
+            endFlg = self.fourEfficacy()
         elif 5 == cardNum :
-            pass
+            endFlg = self.fiveEfficacy()
         elif 6 == cardNum :
             endFlg = self.sixfficacy()
         elif 7 == cardNum :
-            pass
+            endFlg = self.sevenEfficacy()
         elif 8 == cardNum :
             endFlg = self.eightEfficacy()
         elif 9 == cardNum :
-            pass
-        else :
-            pass
+            endFlg = self.nineEfficacy()
         return endFlg
 
     # 1のカードを出す処理
@@ -227,11 +225,19 @@ class XenoMainWidget(Factory.FloatLayout):
 
     # 2のカードの出す処理
     def twoEfficacy(self):
-        pass
+        return 0
 
     # 3のカードを出す処理
     def threeEfficacy(self):
-        pass
+        return 0
+
+    # 4のカードを出す処理
+    def fourEfficacy(self):
+        return 0
+
+    # 5のカードを出す処理
+    def fiveEfficacy(self):
+        return 0
 
     # 6のカードを出す処理
     def sixfficacy(self):
@@ -269,6 +275,10 @@ class XenoMainWidget(Factory.FloatLayout):
             sixFirstResultModal.open()
             return 0
 
+    # 7のカードを出す処理
+    def sevenEfficacy(self):
+        return 0
+
     # 8のカードを出す処理
     def eightEfficacy(self):
         # プレイヤーとCPUのカードを交換
@@ -280,7 +290,7 @@ class XenoMainWidget(Factory.FloatLayout):
 
     # 9のカードを出す処理
     def nineEfficacy(self):
-        pass
+        return 0
 
     # 画面を更新する
     def refresh(self):
@@ -323,12 +333,15 @@ class SelectTurn(Factory.FloatLayout):
 
 # 画面切替ウィジェット
 class XenoRootWidget(Factory.FloatLayout):
+    # タイトル画面へ
     def gotoTitle(self):
         self.clear_widgets()
         self.add_widget(Factory.TitleWidget())
+    # 先攻後攻選択画面へ
     def gotoSelectTurn(self):
         self.clear_widgets()
         self.add_widget(Factory.SelectTurn())
+    # メイン画面へ
     def gotoInit(self, turn):
         self.clear_widgets()
         self.add_widget(Factory.XenoMainWidget())
