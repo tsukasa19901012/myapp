@@ -144,8 +144,10 @@ class XenoMainWidget(Factory.FloatLayout):
         , 9: Card("9", "皇帝", "公開処刑", "指名した相手に山札から1枚引かせて、手札を2枚とも公開させる。そしてどちらか1枚を指定し捨てさせる。", "card9.png")
         , 10: Card("10", "英雄", "潜伏・転生", "場に出すことができず、捨てさせられたら脱落する。皇帝以外に脱落させられた時に転生札で復活する。", "card10.png")
     }
-    def __init__(self, **kwargs):
+    def __init__(self, turn, **kwargs):
         super().__init__(**kwargs)
+        # ターンを設定
+        self.turn = turn
         # デッキを作成する
         self.deck = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,10]
         random.shuffle(self.deck)
@@ -157,8 +159,10 @@ class XenoMainWidget(Factory.FloatLayout):
         self.playerHandList.append(self.deck.pop(0))
         self.cpuHandList.append(self.deck.pop(0))
 
-        # ドローする
-        self.drawDeck()
+        if self.turn == 1 :
+            self.drawDeck()
+        else:
+            self.cpuTurnLogic()
         
         # 画面更新
         self.refresh()
@@ -429,7 +433,7 @@ class XenoRootWidget(Factory.FloatLayout):
     # メイン画面へ
     def gotoInit(self, turn):
         self.clear_widgets()
-        self.add_widget(Factory.XenoMainWidget())
+        self.add_widget(Factory.XenoMainWidget(turn=turn))
         pass
     pass
 
