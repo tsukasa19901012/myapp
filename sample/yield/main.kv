@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*-
+
+<MainRootWidget>:
+    id: main
+    tittle: 'XENO'
+    canvas.before:
+        Color:
+            rgb: (0.93, 0.93, 0.93) 
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+# タイトル画面
+# タイトル画面ボタン
+<StartButton>:
+    text: 'Start'
+    font_size: 36
+    size: [160, 100]
+    size_hint: [None, None]
+    pos_hint: {'center_x':0.5, 'center_y':0.3}
+    background_color: [0, 0, 0, 1]
+
+<TitleWidget@FloatLayout>:
+    id: tittle
+    Label:
+        text: 'POPUPチェック'
+        color: [0, 0, 0, 1]
+        font_size: 72
+        pos_hint: {'center_x':0.5, 'center_y':0.7}
+    StartButton:
+
+ # モーダル画面
+<ModalWindow>:
+    id: modal
+    size_hint: (None, None)
+    size: (400, 400)
+    Label:
+        text: 'モーダル'
