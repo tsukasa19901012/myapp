@@ -183,11 +183,12 @@
             valign: 'top'
             text:
 
-# 6の結果画面
+# 6の対面結果画面
 <SixFirstResultModal@ModalView>:
     id: sixFirstResultModal
     size_hint: None, None
     size: 720, 1080
+    turnLabelText: ''
     resultPlayerLabelText: ''
     resultCpuLabelText: ''
     on_touch_down:
@@ -196,16 +197,21 @@
         orientation: 'vertical' # 縦1列
         padding: 50
         Label:
+            id: turnLabel
+            text: sixFirstResultModal.turnLabelText
+        Label:
             id: resultCpuLabel
             text: sixFirstResultModal.resultCpuLabelText
         Label:
             id: resultPlayerLabel
             text: sixFirstResultModal.resultPlayerLabelText
 
+# 6の対決結果画面
 <SixSecoundResultModal@ModalView>:
     id: sixSecoundResultModal
     size_hint: None, None
     size: 720, 1080
+    turnLabelText: ''
     resultLabelText: ''
     on_touch_down:
         self.dismiss(force=True)
@@ -213,5 +219,17 @@
         orientation: 'vertical' # 縦1列
         padding: 50
         Label:
+            id: turnLabel
+            text: sixSecoundResultModal.turnLabelText
+        Label:
             id: resultLabel
             text: sixSecoundResultModal.resultLabelText
+
+# カード効果画面基底クラス
+<BasicEfficacyModal@ModalView>:
+    size_hint: None, None
+    size: 720, 1080
+    resultLabelText: ''
+    on_touch_down:
+        self.dismiss(force=True)
+    
