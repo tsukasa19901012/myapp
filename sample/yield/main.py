@@ -75,19 +75,29 @@ class StartButton(Factory.Button):
         start_coro(self.some_task())
 
     async def some_task(self):
-        view = ModalWindow()
-        view.ids.label.text = '1つめ'
-        print('モーダル画面表示呼び出し START')
-        view.open()
-        print('view.value = ', view.value) # view.value =  0
-        await event(view, 'on_dismiss')  # modalが閉じられるまで待つ
-        print('view.value = ', view.value)# view.value =  1
+        self.view = ModalWindow()
+        self.view.ids.label.text = '1つめ'
+        print('1つめモーダル画面表示呼び出し START')
+        self.view.open()
+        print('1つめview.value = ', self.view.value) # view.value =  0
+        await event(self.view, 'on_dismiss')  # modalが閉じられるまで待つ
+        print('1つめview.value = ', self.view.value)# view.value =  1
+        print('1つめモーダル画面表示呼び出し END')
         print('view再定義')
-        view = ModalWindow()
-        view.ids.label.text = '2つめ'
-        view.open()
-        await event(view, 'on_dismiss')  # modalが閉じられるまで待つ
-        print('モーダル画面表示呼び出し END')
+        self.function1()
+
+    def function1(self):
+        start_coro(self.function2())
+
+    async def function2(self):
+        self.view = ModalWindow()
+        self.view.ids.label.text = '2つめ'
+        print('2つめモーダル画面表示呼び出し START')
+        self.view.open()
+        print('view.value = ', self.view.value) # view.value =  0
+        await event(self.view, 'on_dismiss')  # modalが閉じられるまで待つ
+        print('view.value = ', self.view.value)# view.value =  1
+        print('2つめモーダル画面表示呼び出し END')
 
 class MainRootWidget(Factory.FloatLayout):
     def gotoTitle(self):
