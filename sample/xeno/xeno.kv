@@ -68,6 +68,10 @@
     cpuHandList: []
     playerDiscardList: []
     cpuDiscardList: []
+    playerFourFlg: 0
+    cpuFourFlg: 0
+    playerSevenflg: 0
+    cpuSevenFlg: 0
     BoxLayout:
         id: xenoPlayWidget
         padding: 50
@@ -240,3 +244,17 @@
         Label:
             size_hint_y: 0.2
             text: basicEfficacyModal.resultLabelText
+
+# カード効果選択画面基底クラス
+<BasicEfficacySelectModal@ModalView>:
+    id: basicEfficacySelectModal
+    size_hint: None, None
+    size: 720, 1080
+    resultLabelText: ''
+    BoxLayout:
+        id: box
+        orientation: 'vertical' # 縦1列
+        padding: 50
+        Label:
+            size_hint_y: 0.2
+            text: basicEfficacySelectModal.resultLabelText

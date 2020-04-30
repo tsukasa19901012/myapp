@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys, random
 sys.dont_write_bytecode = True
-
+import types
+from kivy.clock import Clock
 from kivy.core.text import LabelBase, DEFAULT_FONT
 from kivy.resources import resource_add_path
 LabelBase.register(DEFAULT_FONT, "ipaexg.ttf")
@@ -12,28 +13,45 @@ Window.size = (480, 720)
 from kivy.factory import Factory
 
 # 処理一時停止のための機能
-def start_generator(gen):
-    def step_gen(*args, **kwargs):
+def start_coro(coro):
+    def step_coro(*args, **kwargs):
         try:
-            gen.send((args, kwargs, ))(step_gen)
+            coro.send((args, kwargs, ))(step_coro)
         except StopIteration:
             pass
     try:
-        gen.send(None)(step_gen)
+        coro.send(None)(step_coro)
     except StopIteration:
         pass
+async def thread(func, *args, **kwargs):
+    from threading import Thread
+    return_value = None
+    is_finished = False
+    def wrapper(*args, **kwargs):
+        nonlocal return_value, is_finished
+        return_value = func(*args, **kwargs)
+        is_finished = True
+    Thread(target=wrapper, args=args, kwargs=kwargs).start()
+    while not is_finished:
+        await sleep(3)
+    return return_value
+@types.coroutine
+def sleep(duration):
+    args, kwargs = yield lambda step_coro: Clock.schedule_once(step_coro, duration)
+    return args[0]
+@types.coroutine
 def event(ed, name):
     bind_id = None
-    step_gen = None
-    def bind(step_gen_):
-        nonlocal bind_id, step_gen
+    step_coro = None
+    def bind(step_coro_):
+        nonlocal bind_id, step_coro
         bind_id = ed.fbind(name, callback)
         assert bind_id > 0  # bindingに成功したか確認
-        step_gen = step_gen_
+        step_coro = step_coro_
     def callback(*args, **kwargs):
         ed.unbind_uid(name, bind_id)
-        step_gen(*args, **kwargs)
-    return bind
+        step_coro(*args, **kwargs)
+    return (yield bind)
 
 # カード情報クラス
 class Card:
@@ -94,9 +112,9 @@ class CardImage(Factory.Image):
 
     # 吹き出しのカードを出すボタン押下処理
     def on_playCardButton(self, obj):
-        start_generator(self.playCardButtonLogic(obj))
+        start_coro(self.playCardButtonLogic(obj))
 
-    def playCardButtonLogic(self, obj):
+    async def playCardButtonLogic(self, obj):
         xenoMainWidget = App.get_running_app().root.children[0]
         # クリックしたカード
         cardNum = self.num
@@ -111,8 +129,7 @@ class CardImage(Factory.Image):
         # 画面更新
         xenoMainWidget.refresh()
         # カード効果発動
-        endFlg = xenoMainWidget.activationCardEffect(cardNum)
-        yield event(xenoMainWidget.modal, 'on_dismiss')  # modalが閉じられるまで待つ
+        endFlg = await xenoMainWidget.activationCardEffect(cardNum)
         # ゲーム終了か確認
         if endFlg == 1:
             # タイトルに戻る
@@ -126,7 +143,7 @@ class CardImage(Factory.Image):
             root = App.get_running_app().root
             return root.gotoTitle()
         # cpu処理
-        xenoMainWidget.cpuTurnLogic()     
+        await xenoMainWidget.cpuTurnLogic()     
         pass
 
 # メイン画面
@@ -159,21 +176,52 @@ class XenoMainWidget(Factory.FloatLayout):
         self.playerHandList.append(self.deck.pop(0))
         self.cpuHandList.append(self.deck.pop(0))
 
-        if self.turn == 1 :
-            self.drawDeck()
-        else:
-            self.cpuTurnLogic()
-        
+        # 1ターン目の処理
+        start_coro(self.oneTurnLogic())
+
         # 画面更新
         self.refresh()
         pass
 
+    # 1ターン目の処理
+    async def oneTurnLogic(self):
+        if self.turn == 1 :
+            await self.drawDeck()
+        else:
+            await self.cpuTurnLogic()
+
     # デッキから1枚ドローする
-    def drawDeck(self):
+    async def drawDeck(self):
         # ターンの確認
         if self.turn == 1:
             # プレイヤーのターン
-            self.playerHandList.append(self.deck.pop(0))
+            if self.playerSevenflg == 1:
+                # 7のカード効果
+                deckCnt = len(self.deck)
+                # 3枚までドロー(デッキが3枚より少ない場合はデッキ枚数)
+                drawList = []
+                for i in range(deckCnt):
+                    if i > 2 :
+                        break
+                    drawList.append(self.deck.pop(0))
+                # 引いたカードをboxLayoutで作る
+                cardBox = Factory.BoxLayout(orientation='horizontal')
+                for index, card in  enumerate(drawList):
+                    image = Factory.Image(source=self.cardDict[card].image, on_press=self.sevenEfficasySelect)
+                    image.num = card
+                    image.drawList = drawList
+                    cardBox.add_widget(image)
+                # 表示モーダル
+                self.modal = Factory.BasicEfficacySelectModal()
+                self.modal.resultLabelText = '7の効果です。手札に加える1枚を選んでください。'
+                self.modal.ids.box.add_widget(cardBox)
+                self.modal.open()
+                await event(self.modal, 'on_dismiss')
+                # 選んだカードを手札に加える
+                pass
+            else:
+                self.playerHandList.append(self.deck.pop(0))
+            self.playerSevenflg = 0
         else:
             # cpuのターン
             self.cpuHandList.append(self.deck.pop(0))
@@ -181,19 +229,29 @@ class XenoMainWidget(Factory.FloatLayout):
         self.refresh() 
         pass
 
+    # 7の効果の選択処理
+    def sevenEfficasySelect(self, obj):
+        selectIndex = obj.drawList.index(obj.num)
+        for index, card in  enumerate(obj.drawList):
+            if index == selectIndex:
+                self.playerHandList.append(card)
+            else:
+                self.deck.append(card)
+        random.shuffle(self.deck)
+
     # CPUのターン処理
-    def cpuTurnLogic(self):
+    async def cpuTurnLogic(self):
         # デッキがドローできるか確認
         if len(self.deck) == 0:
             return
         # ターンフラグをcpuにする
         self.turn = 2
         # ドローする
-        self.drawDeck()
+        await self.drawDeck()
         # 画面更新
         self.refresh()
         # cpuがカードを出す
-        self.cpuPlayCard()
+        await self.cpuPlayCard()
         # デッキがない場合
         if len(self.deck) == 0:
             # 対決を行う
@@ -203,13 +261,13 @@ class XenoMainWidget(Factory.FloatLayout):
             return root.gotoTitle()
         # プレイヤーにドローさせる。
         self.turn = 1
-        self.drawDeck()
+        await self.drawDeck()
         # 画面更新
         self.refresh() 
         pass
 
     # cpuがカードを出す
-    def cpuPlayCard(self):
+    async def cpuPlayCard(self):
         # ランダムにカードを選択する
         cardNum = 0
         while True:
@@ -225,7 +283,7 @@ class XenoMainWidget(Factory.FloatLayout):
         # 画面更新
         self.refresh() 
         # カード効果発動
-        endFlg = self.activationCardEffect(cardNum)
+        endFlg = await self.activationCardEffect(cardNum)
         # ゲーム終了か確認
         if endFlg == 1:
             # タイトルに戻る
@@ -236,7 +294,7 @@ class XenoMainWidget(Factory.FloatLayout):
         pass
 
     # カード効果発動
-    def activationCardEffect(self, cardNum):
+    async def activationCardEffect(self, cardNum):
         # 1のカードを出す処理
         def oneEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
@@ -340,8 +398,10 @@ class XenoMainWidget(Factory.FloatLayout):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
                 self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
+                self.playerSevenflg = 1
             else:
                 self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
+                self.cpuSevenFlg = 1
             self.modal.open()
             return 0
 
@@ -391,6 +451,7 @@ class XenoMainWidget(Factory.FloatLayout):
             endFlg = eightEfficacy(self)
         elif 9 == cardNum :
             endFlg = nineEfficacy(self)
+        await event(self.modal, 'on_dismiss')
         return endFlg
 
     # 画面を更新する
