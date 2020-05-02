@@ -9,7 +9,7 @@ LabelBase.register(DEFAULT_FONT, "ipaexg.ttf")
 from kivy.app import App
 from kivy.core.window import Window
 Window.size = (480, 720)
-
+from dataclasses import dataclass
 from kivy.factory import Factory
 
 # 処理一時停止のための機能
@@ -54,13 +54,13 @@ def event(ed, name):
     return (yield bind)
 
 # カード情報クラス
+@dataclass
 class Card:
-    def __init__(self, rank, name, efficacy, efficacyContent, image):
-        self.rank = rank # カードランク
-        self.name = name # カード名
-        self.efficacy = efficacy # カード効果
-        self.efficacyContent = efficacyContent # カード効果内容
-        self.image = image # カード画像
+    rank: str = '' # カードランク
+    name: str = ''# カード名
+    efficacy: str = '' # カード効果
+    efficacyContent: str = '' # カード効果内容
+    image: str = '' # カード画像
 
 # カード詳細画面
 class CardInFoModal(Factory.ModalView):
