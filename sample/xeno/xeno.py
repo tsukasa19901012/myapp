@@ -128,6 +128,7 @@ class CardImage(Factory.Image):
         obj.parent.parent.parent.dismiss()
         # 画面更新
         xenoMainWidget.refresh()
+        await sleep(1)
         # カード効果発動
         endFlg = await xenoMainWidget.activationCardEffect(cardNum)
         # ゲーム終了か確認
@@ -143,6 +144,7 @@ class CardImage(Factory.Image):
             root = App.get_running_app().root
             return root.gotoTitle()
         # cpu処理
+        await sleep(1)
         await xenoMainWidget.cpuTurnLogic()     
         pass
 
@@ -161,6 +163,20 @@ class XenoMainWidget(Factory.FloatLayout):
         , 9: Card("9", "皇帝", "公開処刑", "指名した相手に山札から1枚引かせて、手札を2枚とも公開させる。そしてどちらか1枚を指定し捨てさせる。", "card9.png")
         , 10: Card("10", "英雄", "潜伏・転生", "場に出すことができず、捨てさせられたら脱落する。皇帝以外に脱落させられた時に転生札で復活する。", "card10.png")
     }
+
+    # ログ
+    def outputLog(self):
+        print('デッキ：',self.deck)
+        print('転生札', self.reincarnationCard)
+        print('プレイヤー手札：', self.playerHandList)
+        print('プレイヤー捨て札：', self.playerDiscardList)
+        print('CPU手札：', self.cpuHandList)
+        print('CPU捨て札：', self.cpuDiscardList)
+        print('プレイヤー守護フラグ：', self.playerFourFlg)
+        print('プレイヤー賢者フラグ：', self.playerSevenflg)
+        print('CPU守護フラグ：', self.cpuFourFlg)
+        print('CPU賢者フラグ：', self.cpuSevenFlg)
+
     def __init__(self, turn, **kwargs):
         super().__init__(**kwargs)
         # ターンを設定
@@ -176,6 +192,10 @@ class XenoMainWidget(Factory.FloatLayout):
         self.playerHandList.append(self.deck.pop(0))
         self.cpuHandList.append(self.deck.pop(0))
 
+        # ログ
+        print('ゲーム準備完了')
+        self.outputLog()
+
         # 1ターン目の処理
         start_coro(self.oneTurnLogic())
 
@@ -185,9 +205,12 @@ class XenoMainWidget(Factory.FloatLayout):
 
     # 1ターン目の処理
     async def oneTurnLogic(self):
+        await sleep(1)
         if self.turn == 1 :
+            print('プレイヤーのターンです。')
             await self.drawDeck()
         else:
+            print('CPUのターンです。')
             await self.cpuTurnLogic()
 
     # デッキから1枚ドローする
@@ -197,6 +220,7 @@ class XenoMainWidget(Factory.FloatLayout):
             # プレイヤーのターン
             if self.playerSevenflg == 1:
                 # 7のカード効果
+                print('7の効果を発動')
                 deckCnt = len(self.deck)
                 # 3枚までドロー(デッキが3枚より少ない場合はデッキ枚数)
                 drawList = []
@@ -204,6 +228,7 @@ class XenoMainWidget(Factory.FloatLayout):
                     if i > 2 :
                         break
                     drawList.append(self.deck.pop(0))
+                print('7の効果で引いたカード:', drawList)
                 # 引いたカードをboxLayoutで作る
                 cardBox = Factory.BoxLayout(orientation='horizontal')
                 for index, card in  enumerate(drawList):
@@ -220,7 +245,9 @@ class XenoMainWidget(Factory.FloatLayout):
                 # 選んだカードを手札に加える
                 pass
             else:
+                print('ドロー')
                 self.playerHandList.append(self.deck.pop(0))
+                self.outputLog()
             self.playerSevenflg = 0
         else:
             # cpuのターン
