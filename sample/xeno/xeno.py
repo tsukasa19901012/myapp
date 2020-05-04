@@ -128,7 +128,7 @@ class CardImage(Factory.Image):
         obj.parent.parent.parent.dismiss()
         # 画面更新
         xenoMainWidget.refresh()
-        await sleep(1)
+        await sleep(0.5)
         # カード効果発動
         endFlg = await xenoMainWidget.activationCardEffect(cardNum)
         # ゲーム終了か確認
@@ -144,7 +144,7 @@ class CardImage(Factory.Image):
             root = App.get_running_app().root
             return root.gotoTitle()
         # cpu処理
-        await sleep(1)
+        await sleep(0.5)
         await xenoMainWidget.cpuTurnLogic()     
         pass
 
@@ -205,7 +205,7 @@ class XenoMainWidget(Factory.FloatLayout):
 
     # 1ターン目の処理
     async def oneTurnLogic(self):
-        await sleep(1)
+        await sleep(0.5)
         if self.turn == 1 :
             print('プレイヤーのターンです。')
             await self.drawDeck()
@@ -277,6 +277,7 @@ class XenoMainWidget(Factory.FloatLayout):
         await self.drawDeck()
         # 画面更新
         self.refresh()
+        await sleep(0.5)
         # cpuがカードを出す
         await self.cpuPlayCard()
         # デッキがない場合
@@ -309,6 +310,7 @@ class XenoMainWidget(Factory.FloatLayout):
         self.cpuDiscardList.append(cardNum)
         # 画面更新
         self.refresh() 
+        await sleep(0.5)
         # カード効果発動
         endFlg = await self.activationCardEffect(cardNum)
         # ゲーム終了か確認
