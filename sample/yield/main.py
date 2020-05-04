@@ -84,6 +84,7 @@ class StartButton(Factory.Button):
         print('1つめview.value = ', self.view.value)# view.value =  1
         print('1つめモーダル画面表示呼び出し END')
         print('view再定義')
+        await sleep(3)
         await self.function2('2') # 2番目
         self.function1('3') # 6番目
         self.function1('4') # 5番目
