@@ -145,8 +145,7 @@ class CardImage(Factory.Image):
             return root.gotoTitle()
         # cpu処理
         await sleep(0.5)
-        await xenoMainWidget.cpuTurnLogic()     
-        pass
+        await xenoMainWidget.cpuTurnLogic()
 
 # メイン画面
 class XenoMainWidget(Factory.FloatLayout):
@@ -166,7 +165,7 @@ class XenoMainWidget(Factory.FloatLayout):
 
     # ログ
     def outputLog(self):
-        print('　デッキ：',self.deck)
+        print('　デッキ',len(self.deck),'枚：',self.deck)
         print('　転生札', self.reincarnationCard)
         print('　プレイヤー手札：', self.playerHandList)
         print('　プレイヤー捨て札：', self.playerDiscardList)
@@ -176,6 +175,13 @@ class XenoMainWidget(Factory.FloatLayout):
         print('　プレイヤー賢者フラグ：', self.playerSevenFlg)
         print('　CPU守護フラグ：', self.cpuFourFlg)
         print('　CPU賢者フラグ：', self.cpuSevenFlg)
+        allCnt = len(self.deck) + len(self.playerHandList) + len(self.playerDiscardList) + len(self.cpuHandList) + len(self.cpuDiscardList)
+        if self.reincarnationCard != 0:
+            allCnt = allCnt + 1
+        if allCnt == 18:
+            print('　カード枚数OK')
+        else:
+            print('　!!!!!!!!!!!!! カード枚数NG ', allCnt, '!!!!!!!!!!!!!')
 
     def __init__(self, turn, **kwargs):
         super().__init__(**kwargs)
@@ -197,7 +203,12 @@ class XenoMainWidget(Factory.FloatLayout):
         self.outputLog()
 
         # 1ターン目の処理
-        start_coro(self.oneTurnLogic())
+        endFlg = start_coro(self.oneTurnLogic())
+        # ゲーム終了か確認
+        if endFlg == 1:
+            # タイトルに戻る
+            root = App.get_running_app().root
+            root.gotoTitle()
 
         # 画面更新
         self.refresh()
@@ -208,10 +219,10 @@ class XenoMainWidget(Factory.FloatLayout):
         await sleep(0.5)
         if self.turn == 1 :
             print('プレイヤーのターンです。')
-            await self.drawDeck()
+            return await self.drawDeck()
         else:
             print('CPUのターンです。')
-            await self.cpuTurnLogic()
+            return await self.cpuTurnLogic()
 
     # デッキから1枚ドローする
     async def drawDeck(self):
@@ -224,7 +235,7 @@ class XenoMainWidget(Factory.FloatLayout):
                 for index, card in  enumerate(self.drawList):
                     if index == selectIndex:
                         # 選択したカードは手札に追加
-                        print('7で選択したカード', card)
+                        print('　7で選択したカード', card)
                         xenoMainWidget.playerHandList.append(card)
                     else:
                         # それ以外は山札に戻す
@@ -233,12 +244,13 @@ class XenoMainWidget(Factory.FloatLayout):
                 random.shuffle(xenoMainWidget.deck)
                 # モーダルを閉じる
                 xenoMainWidget.modal.dismiss()
+                xenoMainWidget.outputLog()
 
         # プレイヤーのターン
         if self.turn == 1:
             # 7のカード効果
             if self.playerSevenFlg == 1:
-                print('7の効果を発動')
+                print('プレイヤーが7の効果を発動')
                 deckCnt = len(self.deck)
                 # 3枚までドロー(デッキが3枚より少ない場合はデッキ枚数)
                 drawList = []
@@ -246,7 +258,7 @@ class XenoMainWidget(Factory.FloatLayout):
                     if i > 2 :
                         break
                     drawList.append(self.deck.pop(0))
-                print('7の効果で引いたカード:', drawList)
+                print('　7の効果で引いたカード:', drawList)
                 # 引いたカードをboxLayoutで作る
                 cardBox = Factory.BoxLayout(orientation='horizontal')
                 for index, card in  enumerate(drawList):
@@ -271,7 +283,7 @@ class XenoMainWidget(Factory.FloatLayout):
         else:
             # 7のカード効果
             if self.cpuSevenFlg == 1:
-                print('7の効果を発動')
+                print('CPUが7の効果を発動')
                 deckCnt = len(self.deck)
                 # 3枚までドロー(デッキが3枚より少ない場合はデッキ枚数)
                 drawList = []
@@ -279,7 +291,7 @@ class XenoMainWidget(Factory.FloatLayout):
                     if i > 2 :
                         break
                     drawList.append(self.deck.pop(0))
-                print('7の効果で引いたカード:', drawList)
+                print('　7の効果で引いたカード:', drawList)
                 # 1番大きいカードを選ぶ
                 selectIndex = 0
                 selectCardNum = 0
@@ -291,23 +303,24 @@ class XenoMainWidget(Factory.FloatLayout):
                 for index, card in  enumerate(drawList):
                     if index == selectIndex:
                         # 選択したカードは手札に追加
-                        print('7で選択したカード', card)
-                        self.playerHandList.append(card)
+                        print('　7で選択したカード', card)
+                        self.cpuHandList.append(card)
                     else:
                         # それ以外は山札に戻す
                         self.deck.append(card)
                 # デッキをシャッフルする
                 random.shuffle(self.deck)
+                self.outputLog()
             # 通常のドロー
             else:
                 print('CPUドロー')
                 self.cpuHandList.append(self.deck.pop(0))
                 self.outputLog()
             # 7のカード効果フラグを0に戻す
-            self.cpuSevenFlg = 0       
+            self.cpuSevenFlg = 0
         # 画面更新
-        self.refresh() 
-        pass
+        self.refresh()
+        return 0
 
     # CPUのターン処理
     async def cpuTurnLogic(self):
@@ -398,8 +411,10 @@ class XenoMainWidget(Factory.FloatLayout):
         async def oneEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
+                print('プレイヤーが1を出す')
                 self.modal.resultLabelText = 'あなたは' + str(1) + 'を出しました。'
             else:
+                print('CPUが1を出す')
                 self.modal.resultLabelText = 'CPUは' + str(1) + 'を出しました。'
             self.modal.open()
             await event(self.modal, 'on_dismiss')
@@ -414,9 +429,11 @@ class XenoMainWidget(Factory.FloatLayout):
                 self.modal.dismiss()
 
             if self.turn == 1:
+                print('プレイヤーが2を出す')
                 self.modal = Factory.BasicEfficacySelectModal()
                 self.modal.resultLabelText = 'あなたは' + str(2) + 'を出しました。'
             else:
+                print('CPUが2を出す')
                 self.modal = Factory.BasicEfficacyModal()
                 self.modal.resultLabelText = 'CPUは' + str(2) + 'を出しました。'
             # 2の効果での選択
@@ -440,6 +457,7 @@ class XenoMainWidget(Factory.FloatLayout):
                 self.modal.open()
                 await event(self.modal, 'on_dismiss')
             # 2の効果の結果
+            print('　予想したカード　', self.selectCard)
             self.modal = Factory.BasicEfficacyModal()
             # プレイヤーのターン
             if self.turn == 1:
@@ -508,10 +526,12 @@ class XenoMainWidget(Factory.FloatLayout):
         async def threeEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
+                print('プレイヤーが3を出す')
                 self.modal.resultLabelText = 'あなたは' + str(3) + 'を出しました。'
                 cpuCard = self.cpuHandList[0]
                 self.modal.ids.box.add_widget(Factory.Label(text='CPUの手札は' + str(cpuCard) + 'です。'))
             else:
+                print('CPUが3を出す')
                 self.modal.resultLabelText = 'CPUは' + str(3) + 'を出しました。'
                 playerCard = self.playerHandList[0]
                 self.modal.ids.box.add_widget(Factory.Label(text='プレイヤーの手札は' + str(playerCard) + 'です。'))
@@ -523,9 +543,13 @@ class XenoMainWidget(Factory.FloatLayout):
         async def fourEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
+                print('プレイヤーが4を出す')
                 self.modal.resultLabelText = 'あなたは' + str(4) + 'を出しました。'
+                self.playerFourFlg = 1
             else:
+                print('CPUが4を出す')
                 self.modal.resultLabelText = 'CPUは' + str(4) + 'を出しました。'
+                self.cpuFourFlg = 1
             self.modal.open()
             await event(self.modal, 'on_dismiss')
             return 0
@@ -534,8 +558,10 @@ class XenoMainWidget(Factory.FloatLayout):
         async def fiveEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
+                print('プレイヤーが5を出す')
                 self.modal.resultLabelText = 'あなたは' + str(5) + 'を出しました。'
             else:
+                print('CPUが5を出す')
                 self.modal.resultLabelText = 'CPUは' + str(5) + 'を出しました。'
             self.modal.open()
             await event(self.modal, 'on_dismiss')
@@ -635,6 +661,7 @@ class XenoMainWidget(Factory.FloatLayout):
         async def sevenEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
+                print('プレイヤーが7を出す')
                 self.modal.resultLabelText = 'あなたは' + str(7) + 'を出しました。'
                 self.playerSevenFlg = 1
             else:
@@ -648,6 +675,7 @@ class XenoMainWidget(Factory.FloatLayout):
         async def eightEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
+                print('プレイヤーが8を出す')
                 self.modal.resultLabelText = 'あなたは' + str(8) + 'を出しました。'
             else:
                 self.modal.resultLabelText = 'CPUは' + str(8) + 'を出しました。'
@@ -665,14 +693,87 @@ class XenoMainWidget(Factory.FloatLayout):
 
         # 9のカードを出す処理
         async def nineEfficacy(self):
-            self.modal = Factory.BasicEfficacyModal()
+            returnFlg = 0
+            self.selectCard = 0
+            class ImageButton(Factory.ButtonBehavior, Factory.Image):  
+                # 9の効果のカード選択処理
+                def on_press(self):
+                    xenoMainWidget = App.get_running_app().root.children[0]
+                    xenoMainWidget.selectCard = self.num
+                    # 選択したカード位置
+                    selectIndex = xenoMainWidget.cpuHandList.index(self.num)
+                    for index, card in  enumerate(xenoMainWidget.cpuHandList):
+                        if index == selectIndex:
+                            # 選択したカードは手札に追加
+                            print('　9で選択したカード', card)
+                            xenoMainWidget.cpuDiscardList.append(xenoMainWidget.cpuHandList.pop(selectIndex))
+                    # デッキをシャッフルする
+                    random.shuffle(xenoMainWidget.deck)
+                    xenoMainWidget.refresh()
+                    # モーダルを閉じる
+                    xenoMainWidget.modal.dismiss()
+
             if self.turn == 1:
+                print('プレイヤーが9を出す')
+                self.modal = Factory.BasicEfficacySelectModal()
                 self.modal.resultLabelText = 'あなたは' + str(9) + 'を出しました。'
+                # デッキがあれば、9の効果での選択
+                if len(self.deck) != 0:
+                    self.modal.ids.box.add_widget(Factory.Label(text='捨て札にするカードを選択してください', size_hint_y=0.2))
+                    self.cpuHandList.append(self.deck.pop(0))
+                    # CPUの手札でをboxLayoutで作る
+                    cardBox = Factory.BoxLayout(orientation='horizontal')
+                    for index, card in  enumerate(self.cpuHandList):
+                        image = ImageButton(source=self.cardDict[card].image)
+                        image.num = card
+                        cardBox.add_widget(image)
+                    self.modal.ids.box.add_widget(cardBox)
+                self.modal.open()
+                await event(self.modal, 'on_dismiss')
+                # カードが10の場合
+                if self.selectCard == 10:
+                    self.modal = Factory.BasicEfficacyModal()
+                    self.modal.resultLabelText = '「英雄」を公開処刑したため、プレイヤーの勝ちです。'
+                    returnFlg = 1
+                    self.modal.open()
+                    await event(self.modal, 'on_dismiss')
+                    await sleep(0.5)
             else:
+                print('CPUが9を出す')
+                self.modal = Factory.BasicEfficacyModal()
                 self.modal.resultLabelText = 'CPUは' + str(9) + 'を出しました。'
-            self.modal.open()
-            await event(self.modal, 'on_dismiss')
-            return 0
+                self.modal.open()
+                await event(self.modal, 'on_dismiss')
+                # デッキがあれば、9の効果での選択
+                if len(self.deck) != 0:
+                    self.playerHandList.append(self.deck.pop(0))
+                    self.refresh()
+                    await sleep(0.5)
+                    # 1番大きいカードを選ぶ
+                    selectIndex = 0
+                    selectCardNum = 0
+                    for index, card in  enumerate(self.playerHandList):
+                        if card > selectCardNum:
+                            selectCardNum = card
+                            selectIndex = index
+                    # 9の効果選択後処理
+                    self.selectCard = selectCardNum
+                    for index, card in  enumerate(self.playerHandList):
+                        if index == selectIndex:
+                            # 選択したカードは捨て札
+                            print('　9で選択したカード', card)
+                            self.playerDiscardList.append(self.playerHandList.pop(selectIndex))
+                self.refresh()
+                await sleep(0.5)
+                # カードが10の場合
+                if self.selectCard == 10:
+                    self.modal = Factory.BasicEfficacyModal()
+                    self.modal.resultLabelText = '「英雄」を公開処刑したため、CPUの勝ちです。'
+                    returnFlg = 1
+                    self.modal.open()
+                    await event(self.modal, 'on_dismiss')
+                    await sleep(0.5)
+            return returnFlg
 
         # カード効果発動処理本体
         endFlg = 0
