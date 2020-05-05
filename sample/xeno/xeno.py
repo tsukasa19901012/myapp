@@ -166,16 +166,16 @@ class XenoMainWidget(Factory.FloatLayout):
 
     # ログ
     def outputLog(self):
-        print('デッキ：',self.deck)
-        print('転生札', self.reincarnationCard)
-        print('プレイヤー手札：', self.playerHandList)
-        print('プレイヤー捨て札：', self.playerDiscardList)
-        print('CPU手札：', self.cpuHandList)
-        print('CPU捨て札：', self.cpuDiscardList)
-        print('プレイヤー守護フラグ：', self.playerFourFlg)
-        print('プレイヤー賢者フラグ：', self.playerSevenFlg)
-        print('CPU守護フラグ：', self.cpuFourFlg)
-        print('CPU賢者フラグ：', self.cpuSevenFlg)
+        print('　デッキ：',self.deck)
+        print('　転生札', self.reincarnationCard)
+        print('　プレイヤー手札：', self.playerHandList)
+        print('　プレイヤー捨て札：', self.playerDiscardList)
+        print('　CPU手札：', self.cpuHandList)
+        print('　CPU捨て札：', self.cpuDiscardList)
+        print('　プレイヤー守護フラグ：', self.playerFourFlg)
+        print('　プレイヤー賢者フラグ：', self.playerSevenFlg)
+        print('　CPU守護フラグ：', self.cpuFourFlg)
+        print('　CPU賢者フラグ：', self.cpuSevenFlg)
 
     def __init__(self, turn, **kwargs):
         super().__init__(**kwargs)
@@ -224,6 +224,7 @@ class XenoMainWidget(Factory.FloatLayout):
                 for index, card in  enumerate(self.drawList):
                     if index == selectIndex:
                         # 選択したカードは手札に追加
+                        print('7で選択したカード', card)
                         xenoMainWidget.playerHandList.append(card)
                     else:
                         # それ以外は山札に戻す
@@ -287,7 +288,7 @@ class XenoMainWidget(Factory.FloatLayout):
                         selectCardNum = card
                         selectIndex = index
                 # 7のカード効果選択後処理
-                for index, card in  enumerate(self.drawList):
+                for index, card in  enumerate(drawList):
                     if index == selectIndex:
                         # 選択したカードは手札に追加
                         print('7で選択したカード', card)
