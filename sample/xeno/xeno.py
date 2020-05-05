@@ -138,8 +138,8 @@ class CardImage(Factory.Image):
             return root.gotoTitle()
         # デッキがない場合
         if len(xenoMainWidget.deck) == 0:
-            # 対決を行う
-            xenoMainWidget.sixEfficacy()
+            # 手札カードの比較を行う
+            await xenoMainWidget.lastConfrontation()
             # タイトルに戻る
             root = App.get_running_app().root
             return root.gotoTitle()
@@ -283,7 +283,7 @@ class XenoMainWidget(Factory.FloatLayout):
         # デッキがない場合
         if len(self.deck) == 0:
             # 対決を行う
-            self.sixEfficacy()
+            await self.lastConfrontation()
             # タイトルに戻る
             root = App.get_running_app().root
             return root.gotoTitle()
@@ -320,66 +320,138 @@ class XenoMainWidget(Factory.FloatLayout):
             return root.gotoTitle()
         # 画面更新
         self.refresh() 
-        pass
+        await sleep(0.5)
+
+    # デッキがない場合の対決処理
+    async def lastConfrontation(self):
+        # 互いの手札を取得
+        playerCard = self.playerHandList[0]
+        cpuCard = self.cpuHandList[0]
+        # 勝利判定
+        resultText = ''
+        if playerCard == cpuCard:
+            # 引き分け
+            resultText = '結果は引き分けです。'
+        elif playerCard > cpuCard:
+            # プレイヤーの勝ち
+            resultText = 'プレイヤーの勝ちです。'
+        else:
+            # CPUの勝ち
+            resultText = 'CPUの勝ちです。'
+        # 結果モーダル
+        self.modal = Factory.SixSecoundResultModal()
+        self.modal.turnLabelText = '山札がないため手札の比較をします。'
+        self.modal.resultLabelText = 'プレイヤーの手札は' + str(playerCard) + '。' + 'CPUの手札は' + str(cpuCard) + '。' + resultText
+        self.modal.open()
+        await event(self.modal, 'on_dismiss')
 
     # カード効果発動
     async def activationCardEffect(self, cardNum):
         # 1のカードを出す処理
-        def oneEfficacy(self):
+        async def oneEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'あなたは' + str(1) + 'を出しました。'
             else:
-                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'CPUは' + str(1) + 'を出しました。'
             self.modal.open()
+            await event(self.modal, 'on_dismiss')
             return 0
 
         # 2のカードの出す処理
-        def twoEfficacy(self):
+        async def twoEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'あなたは' + str(2) + 'を出しました。'
             else:
-                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'CPUは' + str(2) + 'を出しました。'
             self.modal.open()
+            await event(self.modal, 'on_dismiss')
             return 0
 
         # 3のカードを出す処理
-        def threeEfficacy(self):
+        async def threeEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'あなたは' + str(3) + 'を出しました。'
                 cpuCard = self.cpuHandList[0]
                 self.modal.ids.box.add_widget(Factory.Label(text='CPUの手札は' + str(cpuCard) + 'です。'))
             else:
-                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'CPUは' + str(3) + 'を出しました。'
                 playerCard = self.playerHandList[0]
                 self.modal.ids.box.add_widget(Factory.Label(text='プレイヤーの手札は' + str(playerCard) + 'です。'))
             self.modal.open()
+            await event(self.modal, 'on_dismiss')
             return 0
 
         # 4のカードを出す処理
-        def fourEfficacy(self):
+        async def fourEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'あなたは' + str(4) + 'を出しました。'
             else:
-                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'CPUは' + str(4) + 'を出しました。'
             self.modal.open()
+            await event(self.modal, 'on_dismiss')
             return 0
 
         # 5のカードを出す処理
-        def fiveEfficacy(self):
+        async def fiveEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'あなたは' + str(5) + 'を出しました。'
             else:
-                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'CPUは' + str(5) + 'を出しました。'
             self.modal.open()
+            await event(self.modal, 'on_dismiss')
+
+            # デッキがあれば、5の効果処理を行う
+            if len(self.deck) != 0:
+                discardCardNum = 0
+                if self.turn == 1:
+                    # CPUにドローさせる
+                    self.cpuHandList.append(self.deck.pop(0))
+                    self.refresh() 
+                    await sleep(0.5)
+                    # ランダムで1枚捨てる
+                    discardCardNum = self.cpuHandList[random.randint(0,1)]
+                    self.cpuHandList.pop(self.cpuHandList.index(discardCardNum))
+                    self.cpuDiscardList.append(discardCardNum)
+                else:
+                    # プレイヤーにドローさせる
+                    self.playerHandList.append(self.deck.pop(0))
+                    self.refresh() 
+                    await sleep(0.5)
+                    # ランダムで1枚捨てる
+                    discardCardNum = self.playerHandList[random.randint(0,1)]
+                    self.playerHandList.pop(self.playerHandList.index(discardCardNum))
+                    self.playerDiscardList.append(discardCardNum)
+                self.refresh() 
+                await sleep(0.5)
+
+                # 捨てたカードが10の場合、転生を行う
+                if 10 == discardCardNum:
+                    if self.turn == 1:
+                        # CPUは手札を捨てる
+                        self.cpuDiscardList.append(self.cpuHandList.pop(0))
+                        self.refresh()
+                        await sleep(0.5)
+                        # CPUは転生札を手札にする
+                        self.cpuHandList.append(self.reincarnationCard)
+                    else:
+                        # プレイヤーは手札を捨てる
+                        self.playerDiscardList.append(self.playerHandList.pop(0))
+                        self.refresh()
+                        await sleep(0.5)
+                        # プレイヤーは転生札を手札にする
+                        self.playerHandList.append(self.reincarnationCard)
+                    self.reincarnationCard = 0
+                    self.refresh() 
+                    await sleep(0.5)
             return 0
 
         # 6のカードを出す処理
-        def sixEfficacy(self):
+        async def sixEfficacy(self):
             returnFlg = 0
             # 互いの手札を取得
             playerCard = self.playerHandList[0]
@@ -402,45 +474,48 @@ class XenoMainWidget(Factory.FloatLayout):
                 # 結果モーダル
                 self.modal = Factory.SixSecoundResultModal()
                 if self.turn == 1:
-                    self.modal.turnLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
+                    self.modal.turnLabelText = 'あなたは' + str(6) + 'を出しました。'
                 else:
-                    self.modal.turnLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
+                    self.modal.turnLabelText = 'CPUは' + str(6) + 'を出しました。'
                 self.modal.resultLabelText = 'プレイヤーの手札は' + str(playerCard) + '。' + 'CPUの手札は' + str(cpuCard) + '。' + resultText
                 self.modal.open()
+                await event(self.modal, 'on_dismiss')
                 returnFlg = 1
             else:
                 # 1枚目の場合
                 self.modal = Factory.SixFirstResultModal()
                 if self.turn == 1:
-                    self.modal.turnLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
+                    self.modal.turnLabelText = 'あなたは' + str(6) + 'を出しました。'
                 else:
-                    self.modal.turnLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
+                    self.modal.turnLabelText = 'CPUは' + str(6) + 'を出しました。'
                 self.modal.resultPlayerLabelText = 'プレイヤーの手札は' + str(playerCard)
                 self.modal.resultCpuLabelText = 'CPUの手札は' + str(cpuCard)
                 self.modal.open()
+                await event(self.modal, 'on_dismiss')
                 returnFlg = 0
              
             return returnFlg
 
         # 7のカードを出す処理
-        def sevenEfficacy(self):
+        async def sevenEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
-                self.playerSevenflg = 1
+                self.modal.resultLabelText = 'あなたは' + str(7) + 'を出しました。'
+                # self.playerSevenflg = 1
             else:
-                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
-                self.cpuSevenFlg = 1
+                self.modal.resultLabelText = 'CPUは' + str(7) + 'を出しました。'
+                # self.cpuSevenFlg = 1
             self.modal.open()
+            await event(self.modal, 'on_dismiss')
             return 0
 
         # 8のカードを出す処理
-        def eightEfficacy(self):
+        async def eightEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'あなたは' + str(8) + 'を出しました。'
             else:
-                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'CPUは' + str(8) + 'を出しました。'
             self.modal.ids.box.add_widget(Factory.Label(text='手札を交換します。'))
             # プレイヤーとCPUのカードを交換
             playerCard = self.playerHandList[0]
@@ -448,39 +523,40 @@ class XenoMainWidget(Factory.FloatLayout):
             self.playerHandList[0] = cpuCard
             self.cpuHandList[0] = playerCard
             self.modal.open()
+            await event(self.modal, 'on_dismiss')
             return 0
 
         # 9のカードを出す処理
-        def nineEfficacy(self):
+        async def nineEfficacy(self):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
-                self.modal.resultLabelText = 'あなたは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'あなたは' + str(9) + 'を出しました。'
             else:
-                self.modal.resultLabelText = 'CPUは' + str(cardNum) + 'を出しました。'
+                self.modal.resultLabelText = 'CPUは' + str(9) + 'を出しました。'
             self.modal.open()
+            await event(self.modal, 'on_dismiss')
             return 0
 
         # カード効果発動処理本体
         endFlg = 0
         if 1 == cardNum :
-            endFlg = oneEfficacy(self)
+            endFlg = await oneEfficacy(self)
         elif 2 == cardNum :
-            endFlg = twoEfficacy(self)
+            endFlg = await twoEfficacy(self)
         elif 3 == cardNum :
-            endFlg = threeEfficacy(self)
+            endFlg = await threeEfficacy(self)
         elif 4 == cardNum :
-            endFlg = fourEfficacy(self)
+            endFlg = await fourEfficacy(self)
         elif 5 == cardNum :
-            endFlg = fiveEfficacy(self)
+            endFlg = await fiveEfficacy(self)
         elif 6 == cardNum :
-            endFlg = sixEfficacy(self)
+            endFlg = await sixEfficacy(self)
         elif 7 == cardNum :
-            endFlg = sevenEfficacy(self)
+            endFlg = await sevenEfficacy(self)
         elif 8 == cardNum :
-            endFlg = eightEfficacy(self)
+            endFlg = await eightEfficacy(self)
         elif 9 == cardNum :
-            endFlg = nineEfficacy(self)
-        await event(self.modal, 'on_dismiss')
+            endFlg = await nineEfficacy(self)
         return endFlg
 
     # 画面を更新する
