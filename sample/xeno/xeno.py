@@ -311,9 +311,13 @@ class XenoMainWidget(Factory.FloatLayout):
 
     # CPUのターン処理
     async def cpuTurnLogic(self):
-        # デッキがドローできるか確認
+        # デッキがない場合
         if len(self.deck) == 0:
-            return
+            # 対決を行う
+            await self.lastConfrontation()
+            # タイトルに戻る
+            root = App.get_running_app().root
+            return root.gotoTitle()
         # ターンフラグをcpuにする
         self.turn = 2
         # ドローする
