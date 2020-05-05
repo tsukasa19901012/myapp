@@ -215,11 +215,28 @@ class XenoMainWidget(Factory.FloatLayout):
 
     # デッキから1枚ドローする
     async def drawDeck(self):
-        # ターンの確認
+        class ImageButton(Factory.ButtonBehavior, Factory.Image):  
+            # 7の効果のカード選択処理
+            def on_press(self):
+                xenoMainWidget = App.get_running_app().root.children[0]
+                # 選択したカード位置
+                selectIndex = self.drawList.index(self.num)
+                for index, card in  enumerate(self.drawList):
+                    if index == selectIndex:
+                        # 選択したカードは手札に追加
+                        xenoMainWidget.playerHandList.append(card)
+                    else:
+                        # それ以外は山札に戻す
+                        xenoMainWidget.deck.append(card)
+                # デッキをシャッフルする
+                random.shuffle(xenoMainWidget.deck)
+                # モーダルを閉じる
+                xenoMainWidget.modal.dismiss()
+
+        # プレイヤーのターン
         if self.turn == 1:
-            # プレイヤーのターン
+            # 7のカード効果
             if self.playerSevenflg == 1:
-                # 7のカード効果
                 print('7の効果を発動')
                 deckCnt = len(self.deck)
                 # 3枚までドロー(デッキが3枚より少ない場合はデッキ枚数)
@@ -232,7 +249,7 @@ class XenoMainWidget(Factory.FloatLayout):
                 # 引いたカードをboxLayoutで作る
                 cardBox = Factory.BoxLayout(orientation='horizontal')
                 for index, card in  enumerate(drawList):
-                    image = Factory.Image(source=self.cardDict[card].image, on_press=self.sevenEfficasySelect)
+                    image = Factory.ImageButton(source=self.cardDict[card].image)
                     image.num = card
                     image.drawList = drawList
                     cardBox.add_widget(image)
@@ -244,27 +261,18 @@ class XenoMainWidget(Factory.FloatLayout):
                 await event(self.modal, 'on_dismiss')
                 # 選んだカードを手札に加える
                 pass
+            # 通常のドロー
             else:
                 print('ドロー')
                 self.playerHandList.append(self.deck.pop(0))
                 self.outputLog()
             self.playerSevenflg = 0
+        # cpuのターン
         else:
-            # cpuのターン
             self.cpuHandList.append(self.deck.pop(0))
         # 画面更新
         self.refresh() 
         pass
-
-    # 7の効果の選択処理
-    def sevenEfficasySelect(self, obj):
-        selectIndex = obj.drawList.index(obj.num)
-        for index, card in  enumerate(obj.drawList):
-            if index == selectIndex:
-                self.playerHandList.append(card)
-            else:
-                self.deck.append(card)
-        random.shuffle(self.deck)
 
     # CPUのターン処理
     async def cpuTurnLogic(self):
@@ -589,10 +597,10 @@ class XenoMainWidget(Factory.FloatLayout):
             self.modal = Factory.BasicEfficacyModal()
             if self.turn == 1:
                 self.modal.resultLabelText = 'あなたは' + str(7) + 'を出しました。'
-                # self.playerSevenflg = 1
+                self.playerSevenflg = 1
             else:
                 self.modal.resultLabelText = 'CPUは' + str(7) + 'を出しました。'
-                # self.cpuSevenFlg = 1
+                self.cpuSevenFlg = 1
             self.modal.open()
             await event(self.modal, 'on_dismiss')
             return 0
