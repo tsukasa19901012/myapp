@@ -360,14 +360,102 @@ class XenoMainWidget(Factory.FloatLayout):
 
         # 2のカードの出す処理
         async def twoEfficacy(self):
-            self.modal = Factory.BasicEfficacyModal()
+            returnFlg = 0
+            self.selectCard = 0
+            def press_Button(button):
+                self.selectCard = button.value
+                self.modal.dismiss()
+
             if self.turn == 1:
+                self.modal = Factory.BasicEfficacySelectModal()
                 self.modal.resultLabelText = 'あなたは' + str(2) + 'を出しました。'
             else:
+                self.modal = Factory.BasicEfficacyModal()
                 self.modal.resultLabelText = 'CPUは' + str(2) + 'を出しました。'
-            self.modal.open()
-            await event(self.modal, 'on_dismiss')
-            return 0
+            # 2の効果での選択
+            if self.turn == 1:
+                self.modal.ids.box.add_widget(Factory.Label(text='予想するカードを選択してください', size_hint_y=0.2))
+                gridLayout = Factory.GridLayout(cols=5)
+                gridLayout.size_hint_y = 0.6
+                gridLayout.spacing = [10, 10]
+                for i in range(1, 11):
+                    button = Factory.Button(text=str(i))
+                    button.value = i
+                    button.bind(on_press=press_Button)
+                    gridLayout.add_widget(button)
+                self.modal.ids.box.add_widget(gridLayout)
+                self.modal.open()
+                await event(self.modal, 'on_dismiss')
+            else:
+                # ランダムで1-10のカードを選択する。
+                self.selectCard = random.randint(1,10)
+                self.modal.ids.box.add_widget(Factory.Label(text='CPUが予想したカードは' + str(self.selectCard) + 'です。'))
+                self.modal.open()
+                await event(self.modal, 'on_dismiss')
+            # 2の効果の結果
+            self.modal = Factory.BasicEfficacyModal()
+            # プレイヤーのターン
+            if self.turn == 1:
+                cpuCard = self.cpuHandList[0]
+                # 予想が当たる
+                if self.selectCard == cpuCard:
+                    # カードが10の場合
+                    if self.selectCard == 10:
+                        self.modal.resultLabelText = '予想が当たりましたが、CPUは転生します。'
+                        self.modal.open()
+                        await event(self.modal, 'on_dismiss')
+                        await sleep(0.5)
+                        # CPUは手札を捨てる
+                        self.cpuDiscardList.append(self.cpuHandList.pop(0))
+                        self.refresh()
+                        await sleep(0.5)
+                        # CPUは転生札を手札にする
+                        self.cpuHandList.append(self.reincarnationCard)
+                        self.refresh()
+                        await sleep(0.5)
+                    # カードが10以外の場合
+                    else:
+                        self.modal.resultLabelText = '予想が当たりました。プレイヤーの勝ちです。'
+                        self.modal.open()
+                        await event(self.modal, 'on_dismiss')
+                        returnFlg = 1
+                # 予想が外れる
+                else:
+                    self.modal.resultLabelText = '予想が外れました。'
+                    self.modal.open()
+                    await event(self.modal, 'on_dismiss')
+            # CPUのターン
+            else:
+                playerCard = self.playerHandList[0]
+                # 予想が当たる
+                if self.selectCard == playerCard:
+                    # カードが10の場合
+                    if self.selectCard == 10:
+                        self.modal.resultLabelText = '予想が当たりましたが、プレイヤーは転生します。'
+                        self.modal.open()
+                        await event(self.modal, 'on_dismiss')
+                        await sleep(0.5)
+                        # プレイヤーは手札を捨てる
+                        self.playerDiscardList.append(self.playerHandList.pop(0))
+                        self.refresh()
+                        await sleep(0.5)
+                        # プレイヤーは転生札を手札にする
+                        self.playerHandList.append(self.reincarnationCard)
+                        self.refresh()
+                        await sleep(0.5)
+                    # カードが10以外の場合
+                    else:
+                        self.modal.resultLabelText = '予想が当たりました。CPUの勝ちです。'
+                        self.modal.open()
+                        await event(self.modal, 'on_dismiss')
+                        returnFlg = 1
+                # 予想が外れる
+                else:
+                    self.modal.resultLabelText = '予想が外れました。'
+                    self.modal.open()
+                    await event(self.modal, 'on_dismiss')
+           
+            return returnFlg
 
         # 3のカードを出す処理
         async def threeEfficacy(self):
@@ -524,6 +612,8 @@ class XenoMainWidget(Factory.FloatLayout):
             self.cpuHandList[0] = playerCard
             self.modal.open()
             await event(self.modal, 'on_dismiss')
+            self.refresh() 
+            await sleep(0.5)
             return 0
 
         # 9のカードを出す処理
