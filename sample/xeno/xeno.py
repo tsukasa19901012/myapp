@@ -474,6 +474,7 @@ class XenoMainWidget(Factory.FloatLayout):
                         await sleep(0.5)
                         # CPUは転生札を手札にする
                         self.cpuHandList.append(self.reincarnationCard)
+                        self.reincarnationCard = 0
                         self.refresh()
                         await sleep(0.5)
                 # CPUのターン
@@ -517,6 +518,7 @@ class XenoMainWidget(Factory.FloatLayout):
                         await sleep(0.5)
                         # プレイヤーは転生札を手札にする
                         self.playerHandList.append(self.reincarnationCard)
+                        self.reincarnationCard = 0
                         self.refresh()
                         await sleep(0.5)
             return 0
@@ -577,6 +579,7 @@ class XenoMainWidget(Factory.FloatLayout):
                         await sleep(0.5)
                         # CPUは転生札を手札にする
                         self.cpuHandList.append(self.reincarnationCard)
+                        self.reincarnationCard = 0
                         self.refresh()
                         await sleep(0.5)
                     # カードが10以外の場合
@@ -607,6 +610,7 @@ class XenoMainWidget(Factory.FloatLayout):
                         await sleep(0.5)
                         # プレイヤーは転生札を手札にする
                         self.playerHandList.append(self.reincarnationCard)
+                        self.reincarnationCard = 0
                         self.refresh()
                         await sleep(0.5)
                     # カードが10以外の場合
