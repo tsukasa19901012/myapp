@@ -1,0 +1,17 @@
+サイト作成にむけて
+「開設後３週間で収益１０万円を得た個人開発サイトでやったことの全部を公開する」
+https://qiita.com/jabba/items/1a49e860a09a613b09d4
+
+使った技術としては以下になる。
+・Rails
+　　Ruby on Rails、Webアプリケーションフレームワーク
+・GraphQL
+　　APIのために作られた、データクエリとデータ操作のための言語と、保存されたデータに対してクエリを実行するランタイムである。
+・React + Redux
+・MongoDB
+・Google Cloud Platform
+・Netlify
+・Heroku
+　　PaaS。Webサービスを公開するために必要なものを全て、予め用意してくれるというサービス。
+・CloudFlare
+
